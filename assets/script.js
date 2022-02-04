@@ -30,3 +30,8 @@ if ('serviceWorker' in navigator) {
         console.log('Service Worker registration failed: ', err);
     });
 }
+
+// handle 404
+if (location.search.includes('?404=')) {
+    document.getElementsByTagName('h1')[0].textContent += ' (stránka nenalezena)';
+}
