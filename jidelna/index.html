@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="cs" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<title>Jídelna GOH</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta name="description" content="Neoficiální webové stránky jídelny Gymnázia Olgy Havlové.">
+
+		<link rel="stylesheet" href="assets/style.css">
+
+		<link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+		<link rel="manifest" href="/site.webmanifest">
+		<meta name="theme-color" content="#795548">
+		<meta property="og:image" content="https://www.igoh.tk/suplovani.png">
+
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-57876300-5"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag('js', new Date());
+			gtag('config', 'UA-57876300-5', { 'anonymize_ip': true, 'client_storage': 'none' });
+		</script>
+	</head>
+	<body class="loading">
+		<header>
+			<nav id="nav">
+				<h1><a href="." onclick="redir(this, event);">Jídelna GOH</a></h1>
+				<a href="login.php?logout">Odhlásit se</a>
+				<span>
+					<a href="/j">iCanteen</a>
+					<a href="/">iGOH</a>
+				</span>
+			</nav>
+		</header>
+		<div class="content" id="content"></div>
+		<div class="over"><div class="loader"></div></div>
+		<script src="assets/script.js"></script>
+	</body>
+</html>
+

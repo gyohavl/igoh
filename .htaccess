@@ -1,0 +1,23 @@
+RewriteEngine On
+
+RewriteRule ^b/(.*)$ prumer/?redirect=$1
+RewriteRule ^b$ prumer/?redirect=
+
+RewriteRule ^s/(.*)$ assets/shortener.php?s=$1
+
+RewriteRule ^(lauder|spsei)/?$ /prumer/$1.php [R,L]
+
+# last rewrite
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule (.*) /?404=$1 [R]
+
+<filesMatch "\.(xlsx|docx|pptx|xls|doc|ppt|txt)$">
+FileETag None
+<ifModule mod_headers.c>
+Header unset ETag
+Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+Header set Pragma "no-cache"
+Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+</ifModule>
+</filesMatch>
