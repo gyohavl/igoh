@@ -12,12 +12,12 @@ main {
     grid-template-columns: 1fr;
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 650px) {
     main {
         grid-template-columns: 1fr 1fr;
     }
 
-    .radek:nth-child(2n+1), .r-custom:last-of-type {
+    main a:last-of-type {
         border-right: 1px #ccc solid;
     }
 }
@@ -27,6 +27,10 @@ main {
         grid-template-columns: 1fr 1fr 1fr;
     }
 
+    main a:nth-child(3n) {
+        border-right: 1px #ccc solid;
+    }
+
     .container {
         width: 1200px;
         margin-left: auto;
@@ -34,7 +38,7 @@ main {
     }
 }
 
-@media screen and (min-width: 800px) and (min-height: 500px) {
+@media screen and (min-width: 650px) and (min-height: 500px) {
     .container {
         margin-top: 10vh;
     }
@@ -42,17 +46,67 @@ main {
 
 .icon {
     display: inline-block;
-    height: 3rem;
-    width: 3rem;
-    padding: 0.55rem;
+    height: 3.1rem;
+    width: 3.1rem;
+    padding: 0.62rem;
+}
+
+.icon--light {
+    border-left: 1px #ccc solid;
+    border-right: 1px #ccc solid;
 }
 
 .icon img,
 .icon svg {
     width: 100%;
+    height: 100%;
+}
+
+a {
+    color: #555;
+}
+
+a:hover {
+    text-decoration: none;
 }
 
 /* header */
 header .icon {
     background-color: black;
+}
+
+h1 {
+    font-weight: normal;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+/* header, main */
+main a,
+header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px #ccc solid;
+}
+
+main a span,
+h1 {
+    padding: 0 1rem;
+}
+
+/* main */
+main a span {
+    font-size: 1.2rem;
+}
+
+/* footer */
+footer {
+    line-height: 1.5;
+    color: #444;
+    font-size: 0.95rem;
+    padding: 0.25rem 1.5rem 1rem;
+}
+
+footer p {
+    margin: 0.75rem 0;
 }

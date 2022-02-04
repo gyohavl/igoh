@@ -79,8 +79,8 @@ function loadContent($bearer) {
 function echoHeader($subjects, $name) {
 	$result = '';
 	$jsData = '';
-	$result .= '<header><nav><div class="top-row"><h1><a href="/">iGOH</a><a href="#" onclick="fill(event, \'\', \'\');">Průměr známek</a></h1><div><a href="?odhlasit">' . $name . ' (odhlásit se)</a><a href="?redirect=next/prubzna.aspx">→ Bakaláři</a>';
-	$result .= substr($name, -3) == '8.B' ? '<a href="/fond">TF</a>' : '';
+	$result .= '<header><nav><div class="top-row"><h1><a href="..">iGOH</a><a href="#" onclick="fill(event, \'\', \'\');">Průměr známek</a></h1><div><a href="?odhlasit">' . $name . ' (odhlásit se)</a><a href="?redirect=next/prubzna.aspx">→ Bakaláři</a>';
+	$result .= substr($name, -3) == '8.B' ? '<a href="../fond">TF</a>' : '';
 	$result .= '</div></div>';
 	// $result .= '<div class="bottom-row">';
 
@@ -120,7 +120,7 @@ function echoHeader($subjects, $name) {
 }
 
 function msg($text = '') {
-	$header = '<header><nav class="uzky"><h1><a href="/">iGOH</a><a href=".">Průměr známek</a></h1></nav></header>';
+	$header = '<header><nav class="uzky"><h1><a href="..">iGOH</a><a href=".">Průměr známek</a></h1></nav></header>';
 	$form = '
 		<form method="post">
 			<label for="username">Uživatelské jméno:</label>
@@ -139,7 +139,8 @@ function wrap($it) {
 }
 
 function getIframe() {
-	return '<div style="height:57px;overflow:hidden"><iframe src="https://www.igoh.tk/#content" style="border:0;height:67px;width:100%;opacity:.5"></iframe></div>';
+	// return '<div style="height:57px;overflow:hidden"><iframe src="https://www.igoh.tk/#content" style="border:0;height:67px;width:100%;opacity:.5"></iframe></div>';
+    return '';
 }
 ?>
 <!DOCTYPE html>
@@ -156,7 +157,7 @@ function getIframe() {
 	<link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
 	<link rel="manifest" href="/site.webmanifest">
 	<meta name="theme-color" content="#795548">
-	<meta property="og:image" content="https://www.igoh.tk/suplovani.png">
+	<meta property="og:image" content="https://www.igoh.tk/assets/og.png">
 
 	<link rel="stylesheet" href="style.css">
 

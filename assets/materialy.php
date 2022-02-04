@@ -66,7 +66,7 @@ if (isset($_GET["404"])) {
 
 <body>
 	<div class="container">
-		<h1><a href="/">iGOH</a>: Materiály<?= isset($_GET['404']) ? ' (stránka nenalezena)' : '' ?></h1>
+		<h1><a href="..">iGOH</a>: Materiály<?= isset($_GET['404']) ? ' (stránka nenalezena)' : '' ?></h1>
 		<?php
 		$zapisy = '<details>
 			<summary><span>Zápisy Vítka Kološe</span></summary>
