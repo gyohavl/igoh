@@ -23,7 +23,7 @@ if(!empty($_COOKIE["susenky"])) {
 
 		if(!empty($_COOKIE["username"])) {
 			echo "<div class=\"day\">
-			Přihlášený uživatel: <b>{$_COOKIE["username"]}</b>
+			Přihlášený uživatel: <b>{$_COOKIE["username"]}</b> (<a href=\"login.php?logout\" style=\"color:inherit\">odhlásit se</a>)
 			</div>";
 		}
 
@@ -84,7 +84,7 @@ function userView($data) {
 		// $polevkaChecked = in_array(true, array_column($day["meals"], 'ordered')) ? 'checked' : '';
 		$polevkaChecked = 'checked';
 		?>
-		<div class="day<?php 
+		<div class="day<?php
 				if($jidloP == $polevkaP) {
 					echo " disabled";
 				} elseif(strpos($jidloP, "pro zaměstnance")) {
