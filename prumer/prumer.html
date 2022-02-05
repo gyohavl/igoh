@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const bakaUrl = 'https://gyohavl.bakalari.cz:8081/';
+        let accessToken = '';
+
+        // accessToken should probably be saved in a cookie
+
+        // try to login → if it fails, show login form and error description; if it succeeds, call the endpoint(s)
+        // try to call the endpoint(s) → if it fails, show login form and error description
+
+        async function processLogin(username, password, remember) {
+            const loginResponse = await loginRequest(false, username, password);
+
+            if (loginResponse.ok) {
+                if (remember) {
+                    setCookie('baka_refresh_token', loginResponse.refresh_token, 30);
+                }
+
+                accessToken = loginResponse.access_token;
+                console.log('úspěch');
+            } else {
+                console.log(loginResponse.error_description);
+            }
+        }
+
+        async function callEndpoint(endpointName) {
+            if (accessToken) {
+                const firstResponse = await endpointRequest(endpointName, accessToken);
+
+                if (firstResponse.ok) {
+                    return firstResponse;
+                }
+            }
+
+            const refreshToken = getCookie('baka_refresh_token');
+
+            if (refreshToken) {
+                const loginResponse = await loginRequest(refreshToken);
+
+                if (loginResponse.ok) {
+                    setCookie('baka_refresh_token', loginResponse.refresh_token, 30);
+                    accessToken = loginResponse.access_token;
+                    return await endpointRequest(endpointName, accessToken);
+                } else {
+                    return { ok: false, error_description: 'Přihlášení vypršelo' };
+                }
+            }
+
+            return { ok: false };
+        }
+
+        async function loginRequest(token, username, password) {
+            const response = await fetch(bakaUrl + 'api/login', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: token ? `client_id=ANDR&grant_type=refresh_token&refresh_token=${token}`
+                    : `client_id=ANDR&grant_type=password&username=${username}&password=${password}`
+            });
+            const responseObject = await response.json();
+            return { ok: response.ok, ...responseObject };
+        }
+
+        async function endpointRequest(endpointName, accessToken) {
+            const response = await fetch(bakaUrl + 'api/3/' + endpointName, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + accessToken
+                }
+            });
+            const responseObject = await response.json();
+            return { ok: response.ok, ...responseObject };
+        }
+
+        // https://www.w3schools.com/js/js_cookies.asp
+        function setCookie(cname, cvalue, exdays) {
+            const d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            let expires = 'expires=' + d.toUTCString();
+            document.cookie = cname + '=' + cvalue + ';' + expires + ';path=/;SameSite=Strict';
+        }
+
+        function getCookie(cname) {
+            let name = cname + '=';
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return '';
+        }
+    </script>
+</body>
+
+</html>
