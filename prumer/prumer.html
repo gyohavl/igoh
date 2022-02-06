@@ -9,31 +9,72 @@
 </head>
 
 <body>
+    <div id="el1"></div>
+    <div id="el2"></div>
+
     <script>
         const bakaUrl = 'https://gyohavl.bakalari.cz:8081/';
-        let accessToken = '';
+        const el1 = document.getElementById('el1');
+        const el2 = document.getElementById('el2');
 
-        // accessToken should probably be saved in a cookie
+        loadEndpoints();
+        removeOldLocalStorageItems();
 
-        // try to login → if it fails, show login form and error description; if it succeeds, call the endpoint(s)
-        // try to call the endpoint(s) → if it fails, show login form and error description
+        function loadEndpoints() {
+            callEndpoint('user').then(r => {
+                el1.innerHTML = r.ok ? r.FullName : loginForm();
+            })
 
+            callEndpoint('marks').then(r => {
+                el2.innerHTML = r.ok ? JSON.stringify(r.Subjects) : '';
+            })
+        }
+
+        function loginForm(loginError) {
+            const wrappedLoginError = loginError ? `<b>${loginError}</b>` : '';
+            return `<form onsubmit="formSubmit();" action="javascript:void(0);">
+                ${wrappedLoginError}
+                <label for="username">Uživatelské jméno:</label>
+                <input type="text" id="username">
+                <label for="password">Heslo:</label>
+                <input type="password" id="password">
+                <tr><td><label for="remember">Neodhlašovat:</label><input type="checkbox" id="remember" checked>
+                <input type="submit" value="Přihlásit se">
+            </form>`;
+        }
+
+        function formSubmit() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            processLogin(username, password, remember).then(loggedIn => {
+                if (loggedIn) {
+                    loadEndpoints();
+                } else {
+                    el1.innerHTML = loginForm('chyba přihlášení :(');
+                }
+            });
+        }
+
+        // event processing
         async function processLogin(username, password, remember) {
             const loginResponse = await loginRequest(false, username, password);
 
             if (loginResponse.ok) {
+                setVal('baka_access_token', loginResponse.access_token, 0.5);
+
                 if (remember) {
-                    setCookie('baka_refresh_token', loginResponse.refresh_token, 30);
+                    setVal('baka_refresh_token', loginResponse.refresh_token, 30 * 24);
                 }
 
-                accessToken = loginResponse.access_token;
-                console.log('úspěch');
-            } else {
-                console.log(loginResponse.error_description);
+                return true;
             }
         }
 
         async function callEndpoint(endpointName) {
+            const accessToken = getVal('baka_access_token');
+            const refreshToken = getVal('baka_refresh_token');
+
             if (accessToken) {
                 const firstResponse = await endpointRequest(endpointName, accessToken);
 
@@ -42,23 +83,22 @@
                 }
             }
 
-            const refreshToken = getCookie('baka_refresh_token');
-
             if (refreshToken) {
                 const loginResponse = await loginRequest(refreshToken);
 
                 if (loginResponse.ok) {
-                    setCookie('baka_refresh_token', loginResponse.refresh_token, 30);
-                    accessToken = loginResponse.access_token;
-                    return await endpointRequest(endpointName, accessToken);
+                    setVal('baka_access_token', loginResponse.access_token, 0.5);
+                    setVal('baka_refresh_token', loginResponse.refresh_token, 30 * 24);
+                    return await endpointRequest(endpointName, loginResponse.access_token);
                 } else {
-                    return { ok: false, error_description: 'Přihlášení vypršelo' };
+                    return { ok: false };
                 }
             }
 
             return { ok: false };
         }
 
+        // requests
         async function loginRequest(token, username, password) {
             const response = await fetch(bakaUrl + 'api/login', {
                 method: 'POST',
@@ -85,28 +125,48 @@
             return { ok: response.ok, ...responseObject };
         }
 
-        // https://www.w3schools.com/js/js_cookies.asp
-        function setCookie(cname, cvalue, exdays) {
-            const d = new Date();
-            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-            let expires = 'expires=' + d.toUTCString();
-            document.cookie = cname + '=' + cvalue + ';' + expires + ';path=/;SameSite=Strict';
+        // storage
+        function removeOldLocalStorageItems() {
+            const itemsInUse = ['baka_access_token', 'baka_refresh_token'];
+            const saved = itemsInUse.map(item => localStorage.getItem(item));
+            localStorage.clear();
+            itemsInUse.forEach((item, index) => saved[index] ? localStorage.setItem(item, saved[index]) : false);
         }
 
-        function getCookie(cname) {
-            let name = cname + '=';
-            let ca = document.cookie.split(';');
-            for (let i = 0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0) == ' ') {
-                    c = c.substring(1);
-                }
-                if (c.indexOf(name) == 0) {
-                    return c.substring(name.length, c.length);
-                }
-            }
-            return '';
+        function getVal(name) {
+            return localStorage.getItem(name);
         }
+
+        function setVal(name, value, exhours) {
+            localStorage.setItem(name, value);
+        }
+
+        function delVal(name) {
+            localStorage.removeItem(name);
+        }
+
+        // https://www.w3schools.com/js/js_cookies.asp
+        // function setCookie(cname, cvalue, exhours) {
+        //     const d = new Date();
+        //     d.setTime(d.getTime() + (exhours * 60 * 60 * 1000));
+        //     let expires = 'expires=' + d.toUTCString();
+        //     document.cookie = cname + '=' + cvalue + ';' + expires + ';path=/;SameSite=Strict';
+        // }
+
+        // function getCookie(cname) {
+        //     let name = cname + '=';
+        //     let ca = document.cookie.split(';');
+        //     for (let i = 0; i < ca.length; i++) {
+        //         let c = ca[i];
+        //         while (c.charAt(0) == ' ') {
+        //             c = c.substring(1);
+        //         }
+        //         if (c.indexOf(name) == 0) {
+        //             return c.substring(name.length, c.length);
+        //         }
+        //     }
+        //     return '';
+        // }
     </script>
 </body>
 
