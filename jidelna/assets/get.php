@@ -23,7 +23,8 @@ if(!empty($_COOKIE["susenky"])) {
 
 		if(!empty($_COOKIE["username"])) {
 			echo "<div class=\"day\">
-			Přihlášený uživatel: <b>{$_COOKIE["username"]}</b> (<a href=\"login.php?logout\" style=\"color:inherit\">odhlásit se</a>)
+			Přihlášený uživatel: <b>{$_COOKIE["username"]}</b> (<a href=\"login.php?logout\" style=\"color:inherit\">odhlásit se</a>)<br>
+            <small style=\"color:grey\">burzu obědů najdeš pouze v <a href=\"https://jidelna.gyohavl.cz/\" style=\"color:inherit\">iCanteen</a> (pokud na mobilu nevidíš tlačítko [do burzy], zkus otočit obrazovku na šířku)</small>
 			</div>";
 		}
 
