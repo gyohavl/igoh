@@ -1,5 +1,5 @@
 <?php
-ini_set("display_errors", 1);
+ini_set('display_errors', 1);
 error_reporting(E_ERROR | E_WARNING);
 ignore_user_abort(true);
 header('Content-Type: text/plain');
@@ -12,22 +12,22 @@ $lastFile = file_get_contents('data/last.html');
 if ($file !== false) {
     if ($lastFile != $file) {
         file_put_contents('data/last.html', $file);
-        file_get_contents("https://suply.herokuapp.com/suplovani-send-new.php");
-        echo "Odesláno!";
+        file_get_contents('https://suply.herokuapp.com/suplovani-send-new.php');
+        echo 'Odesláno!';
+    } else {
+        echo 'Beze změn.';
     }
 } else {
-    echo "Nelze načíst obsah suplování.";
+    echo 'Nelze načíst obsah suplování.';
 }
 
 function customCurl($url) {
-    global $curl_timeout, $debug;
-    $curl_timeout = isset($curl_timeout) ? $curl_timeout : 5;
     $c = curl_init();
-    curl_setopt($c, CURLOPT_TIMEOUT, $curl_timeout);
+    curl_setopt($c, CURLOPT_TIMEOUT, 5);
     curl_setopt($c, CURLOPT_URL, $url);
     curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
     $result = curl_exec($c);
     $http_code = curl_getinfo($c, CURLINFO_HTTP_CODE);
     $ct = curl_getinfo($c, CURLINFO_CONTENT_TYPE);
