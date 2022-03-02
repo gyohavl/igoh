@@ -49,7 +49,7 @@ function loadContent($bearer) {
 	}
 
 	// 8.B (get class)
-	if (isset($_GET["getclass"])) {
+	if (isset($_GET["getclass"]) && $name != '???') {
 		header("Content-Type: text/plain");
 		echo substr($name, -3);
 		exit;
