@@ -10,6 +10,8 @@ $file = isset($file[1]) ? $file[1] : false;
 $lastFile = file_get_contents('data/last.html');
 
 if ($file !== false) {
+    logError(false);
+
     if ($lastFile != $file) {
         file_put_contents('data/last.html', $file);
         file_get_contents('https://suply.herokuapp.com/suplovani-send-new.php');
@@ -19,6 +21,20 @@ if ($file !== false) {
     }
 } else {
     echo 'Nelze načíst obsah suplování.';
+    reportError();
+    logError(true);
+}
+
+function reportError() {
+    $errorFile = file_get_contents('data/error.txt');
+
+    if (!$errorFile) {
+        file_get_contents('https://suply.herokuapp.com/suplovani-send-new.php');
+    }
+}
+
+function logError($isError) {
+    file_put_contents('data/error.txt', $isError ? 'error' : '');
 }
 
 function customCurl($url) {
