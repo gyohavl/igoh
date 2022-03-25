@@ -83,7 +83,7 @@ function getTimestamp() {
 	}
 }
 
-$timestamp = getTimestamp() + 3600000;
+$timestamp = getTimestamp() + 3600000 * 3; // adding span because of timezones
 $getParams = "__VIEWSTATE=M8SZ%2BTf07IXyPB6m4ymrOkBbjoRJ3pQN38QCfuTa18vZhYrfei%2BDMXzK6Li8YhgUQO86jwWpyWs5ubBJv1mJrwYvvu2EZEMiXEPF2QKWy5VmS8A%2FYfQKCeqSSyySjiFRvG0jQaKxO4RkluJVzuqe7VNFZq0AfQJcye5XzIZ5%2BekQXPIRdfaRGH8RXdfOBROM&DateEdit%24State={%26quot%3BrawValue%26quot%3B%3A%26quot%3B$timestamp%26quot%3B%2C%26quot%3BuseMinDateInsteadOfNull%26quot%3B%3Afalse}&DateEdit=&FilterDropDown_VI=1&FilterDropDown=";
 $page = customCurl("$url/next/zmeny.aspx?$getParams");
 
