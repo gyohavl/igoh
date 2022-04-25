@@ -2,7 +2,8 @@
 document.querySelectorAll('a').forEach(el => {
     el.addEventListener('click', (event) => {
         gtag('event', 'click', {
-            'event_label': el
+            'event_label': el,
+            'transport_type': 'beacon'
         });
     })
 });
