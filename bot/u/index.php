@@ -9,7 +9,7 @@ foreach (explode("\n", $response) as $row) {
         $data[$r[0]] = $r[1];
 }
 
-echo $data['u'] . ' lidí odebírá suplování' . PHP_EOL . 'to je asi ' . $data['p'] . ' % studentů školy' . PHP_EOL;
+echo $data['u'] . ' lidí odebírá suplování' . PHP_EOL . 'to je asi ' . str_replace('.', ',', $data['p']) . ' % studentů školy' . PHP_EOL;
 echo PHP_EOL . 'zde je rozdělení podle tříd:' . PHP_EOL;
 
 foreach (array_slice($data, 0, 20) as $key => $value) {
