@@ -82,6 +82,7 @@ function echoHeader($subjects, $name) {
 	$result .= '<header><nav><div class="top-row"><h1><a href="..">iGOH</a><a href="#" onclick="fill(event, \'\', \'\');">Průměr známek</a></h1><div><a href="?odhlasit">' . $name . ' (odhlásit se)</a><a href="?redirect=next/prubzna.aspx">→ Bakaláři</a>';
 	// $result .= substr($name, -3) == '8.B' ? '<a href="../fond">TF</a>' : '';
 	$result .= '</div></div>';
+    // $result .= '<div class="top-row"><a href="https://www.instagram.com/umzene_tusky/" onclick="gtag(\'event\', \'click\', {\'event_label\': \'https://www.instagram.com/umzene_tusky/?ref=prumer\',\'transport_type\': \'beacon\'});">Dražba oktávy B</a></div>';
 	// $result .= '<div class="bottom-row">';
 
 	foreach ($subjects as $key => $subject) {
