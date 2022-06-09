@@ -116,7 +116,11 @@ if (strpos($page, 'Změny') === false) {
 			}
 		}
 	} else {
-		echo "[ERROR] chybí login";
+		if ($page == "") {
+            echo "[ERROR] chyba serveru";
+        } else {
+            echo "[ERROR] chybí login";
+        }
 	}
 } else {
 	echo $page;
