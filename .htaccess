@@ -4,6 +4,7 @@ RewriteRule ^b/(.*)$ prumer/?redirect=$1
 RewriteRule ^b$ prumer/?redirect=
 
 RewriteRule ^s/(.*)$ assets/shortener.php?s=$1
+RewriteRule ^tanecni-vecer\/?$ assets/tanecni-vecer.html
 
 RewriteRule ^(lauder|spsei)/?$ /prumer/$1.php [R,L]
 
