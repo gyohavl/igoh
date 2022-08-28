@@ -68,6 +68,11 @@ header a:hover {
     text-decoration: underline;
 }
 
+header .info {
+    border-bottom: 1px #ccc solid;
+    padding: 1rem 1.5rem;
+}
+
 h1 {
     font-weight: normal;
     font-size: 1.5rem;
