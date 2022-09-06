@@ -1,7 +1,6 @@
 <?php
-echo file_get_contents('https://suply.herokuapp.com/stav/?' . $_SERVER['QUERY_STRING']);
+// echo file_get_contents('https://suply.herokuapp.com/stav/?' . $_SERVER['QUERY_STRING']);
 
-/*
 header('Content-Type: text/plain');
 $response = file_get_contents('https://suply.herokuapp.com/stav/simple.php');
 $data = array();
@@ -20,4 +19,3 @@ foreach (array_slice($data, 0, 20) as $key => $value) {
 }
 
 echo PHP_EOL . $data['o'] . ' studentů odebírá jídelníček';
-*/
