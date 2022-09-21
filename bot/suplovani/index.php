@@ -4,7 +4,7 @@ ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 date_default_timezone_set('Europe/Prague');
 require_once('data/token.php');
-$url = 'https://gyohavl.bakalari.cz:8081';
+$url = 'https://gyohavl.bakalari.cz';
 
 function customCurl($url) {
     global $curl_timeout, $debug;

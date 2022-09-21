@@ -1,6 +1,6 @@
 <?php
 session_start();
-$url = isset($url) ? $url : 'https://gyohavl.bakalari.cz:8081/api/';
+$url = isset($url) ? $url : 'https://gyohavl.bakalari.cz/api/';
 
 function main() {
 	if (!empty($_POST['username']) && !empty($_POST['password'])) {
