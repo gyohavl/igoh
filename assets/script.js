@@ -13,7 +13,7 @@ fetch('prumer/?getclass=1').then(r => r.text()).then(t => {
     if (t == '8.B') {
         document.querySelectorAll('.only8b').forEach(el => el.removeAttribute('style'));
     }
-    let classes = { '': 'ZL', '???': 'ZL', '1.A': 'ZL', '1.B': 'ZM', '1.C': 'ZN', '2.A': 'ZI', '2.B': 'ZJ', '2.C': 'ZK', '3.A': 'ZE', '3.B': 'ZF', '3.C': 'ZG', '4.A': 'ZB', '4.B': 'ZC', '4.C': 'ZD', '5.A': 'Z8', '5.B': 'Z9', '6.A': 'Z5', '6.B': 'Z6', '7.A': 'Z2', '7.B': 'Z3', '8.A': 'YZ', '8.B': 'Z0' };
+    let classes = { '': 'ZL', '???': 'ZL', '1.A': 'ZO', '1.B': 'ZP', '1.C': 'ZQ', '2.A': 'ZL', '2.B': 'ZM', '2.C': 'ZN', '3.A': 'ZI', '3.B': 'ZJ', '3.C': 'ZK', '4.A': 'ZE', '4.B': 'ZF', '4.C': 'ZG', '5.A': 'ZB', '5.B': 'ZC', '6.A': 'Z8', '6.B': 'Z9', '7.A': 'Z5', '7.B': 'Z6', '8.A': 'Z2', '8.B': 'Z3' };
     document.getElementById('ttpublic').setAttribute('href', `/b/timetable/public/Actual/class/${classes[t]}%3FTouchMode=1`);
 });
 
