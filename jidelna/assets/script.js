@@ -91,3 +91,52 @@ function getCookie(cname) {
 	}
 	return undefined;
 }
+
+//checks system default and previously used theme and calls swapCss
+var currentmode;
+var preferredmode;
+
+if(localStorage.getItem('preferredmode') == 'dark'){
+	swapCss("dark");
+}
+else if(localStorage.getItem('preferredmode') == 'light'){
+	swapCss("light");
+}else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+	swapCss("dark");
+}
+else{
+	swapCss("light");
+}
+
+//button press functioinality
+function buttonwaspressed(){
+	if (currentmode == "dark"){
+
+		swapCss("light");
+	}
+	else if (currentmode == "light") {
+
+		swapCss("dark");
+	}
+	
+}
+
+//setting modes and other stuff
+function swapCss(a){
+	if(a == "dark"){
+		document.getElementById("theme").setAttribute('href', 'assets/jidelna_style_dark.css?v1.1');
+		document.getElementById("modebuttontext").innerText = "Light mode :(";
+		currentmode = "dark";
+		localStorage.setItem('preferredmode', 'dark');
+		console.log("swapcss called to dark");
+		
+	}
+	else if(a == "light"){
+		
+		document.getElementById("theme").setAttribute('href', "assets/jidelna_style_light.css?v1.1");
+		document.getElementById("modebuttontext").innerText = "Dark mode :)";
+		currentmode = "light";
+		localStorage.setItem('preferredmode', 'light');
+		
+	}
+}

@@ -1,3 +1,52 @@
+
+var preferredmode;
+var systempreferredmode;
+var currentmode;
+function initializeTheme(){
+	console.log("initializing theme");
+	if(localStorage.getItem('preferredmode') == 'dark'){
+		swapCss("dark");
+	}
+	else if(localStorage.getItem('preferredmode') == 'light'){
+		swapCss("light");
+	}else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+	{
+		swapCss("dark");
+	}
+	else{
+		swapCss("light");
+	}
+}
+initializeTheme();
+
+
+function buttonwaspressed() {
+	if (currentmode == "dark")
+	{
+		swapCss("light");
+	}
+	else if(currentmode == "light") {
+		swapCss("dark");
+	}
+	
+}
+
+function swapCss(a){
+	if(a == "dark"){
+		document.getElementById("theme").setAttribute('href', "style_dark.css?v1.1");
+		document.getElementById("modebuttontext").innerText = "Light mode :(";
+		currentmode = "dark";
+		localStorage.setItem('preferredmode', 'dark');
+		
+	}
+	else if(a == "light"){
+		
+		document.getElementById("theme").setAttribute('href', "style.css?v1.1");
+		document.getElementById("modebuttontext").innerText = "Dark mode :)";
+		currentmode = "light";
+		localStorage.setItem('preferredmode', 'light');
+	}
+}
 var changed = false;
 
 function calculate() {
@@ -134,3 +183,4 @@ function showMenu() {
 	let result = data.map(item => item.znamky == ' ' ? '' : `<a href="#" onclick="fill(event, '${item.znamky}', '${item.vahy}');"><b>${item.predmet}</b>&nbsp;&nbsp;${item.prumer}</a>`);
 	document.getElementById('menu').innerHTML = result.join('');
 }
+

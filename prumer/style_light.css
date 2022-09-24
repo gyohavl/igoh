@@ -1,0 +1,128 @@
+* {
+    box-sizing: border-box;
+}
+
+/* root elements */
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+@media screen and (min-width: 650px) {
+    main {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    main a:last-of-type {
+        border-right: 1px #ccc solid;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    main {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    main a:nth-child(3n) {
+        border-right: 1px #ccc solid;
+    }
+
+    .container {
+        width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media screen and (min-width: 650px) and (min-height: 500px) {
+    .container {
+        margin-top: 10vh;
+    }
+}
+
+/* links */
+a {
+    color: #555;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* header */
+header .icon {
+    background-color: black;
+}
+
+header a {
+    text-decoration: none;
+    color: black;
+}
+
+header a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    font-weight: normal;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+/* header, main */
+main a,
+header a {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px #ccc solid;
+}
+
+.icon {
+    display: inline-block;
+    height: 3.1rem;
+    width: 3.1rem;
+    min-width: 3.1rem;
+    padding: 0.62rem;
+}
+
+.icon--light {
+    border-left: 1px #ccc solid;
+    border-right: 1px #ccc solid;
+}
+
+.icon img,
+.icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+a:hover .icon {
+    opacity: 0.9;
+}
+
+main a span,
+h1 {
+    padding: 0 1rem;
+}
+
+/* main */
+main a span {
+    font-size: 1.2rem;
+}
+
+/* footer */
+footer {
+    line-height: 1.5;
+    color: #444;
+    font-size: 0.95rem;
+    padding: 0.25rem 1.5rem 1rem;
+}
+
+footer p {
+    margin: 0.75rem 0;
+}

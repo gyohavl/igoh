@@ -1,0 +1,199 @@
+/*todo list
+- změnit šedou ikonu u materiálů
+- dodělat černou u kalkulačky a jídelny (matroše stejně nikdo nepoužívá)
+- možná změnit rozložení (z původních tří slouců a dvou řádků udělat dva sloupce a tři řádky)
+prozatím vše asi
+*/
+
+* {
+    box-sizing: border-box;
+}
+
+/* root elements */
+body {
+    background-color: #303030;
+    font-family: sans-serif;
+    margin: 0;
+	font-size-adjust:auto;
+}
+
+main {
+    display:grid;
+    grid-template-columns: 1fr;
+	background-color: #303030;
+}
+
+@media screen and (min-width: 650px) {
+    main {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    main a:last-of-type {
+        border-right: 1px transparent solid;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    main {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    main a:nth-child(3n) {
+        border-right: 1px transparent solid;
+    }
+
+    .container {
+        width: 1200px;
+        margin-left:auto;
+        margin-right: auto;
+    }
+}
+
+@media screen and (min-width: 650px) and (min-height: 500px) {
+    .container {
+        margin-top: 10vh;
+    }
+}
+
+/* links */
+a {
+    color: #DBDBDB;
+}
+
+a:hover {
+	color: #e7e7e7;
+    
+}
+
+/* header */
+
+
+header .icon {
+    background-color: #5C2200;
+}
+
+header a {
+    text-decoration: none;
+    color: white;
+}
+
+header a:hover {
+    text-decoration: underline;
+	opacity:1;
+}
+
+h1 {
+    font-weight: normal;
+    font-size: 1.5rem;
+    margin: 0;
+	opacity:0.95;
+}
+a:hover h1{
+	opacity:1;
+}
+
+/* header, main */
+main a,
+header a {
+    display: flex;
+	color:#A0A0A0;
+    align-items: center;
+    border-bottom: 1px  solid;
+    background-color: #303030;
+}
+
+.icon,
+.icon--light{
+    display: inline-block;
+	
+    height: 3.1rem;
+    width: 3.1rem;
+    min-width: 3.1rem;
+    padding: 0.62rem;
+
+    border-color: #303030;
+}
+
+/*
+.icon--light {
+        border-left: 1px #ccc solid;
+        border-right: 1px #ccc solid;
+    }
+	
+*/
+
+
+
+.icon img,
+.icon svg {
+    width: 100%;
+    height: 100%;
+}
+.icon {
+	opacity: 0.8;
+}
+
+
+a:hover .icon {
+    opacity: 1;
+}
+
+
+main a span,
+h1 {
+    padding: 0 1rem;
+	
+	
+}
+
+.themebutton {
+	font-size: 25px;
+	border-color:transparent;
+	position:sticky;
+    display:inline-block;
+    left: 75%;
+    top: 10%; 
+
+    background-color: transparent;
+
+}   
+
+/* main */
+main a span {
+    font-size: 1.2rem;
+}
+
+/* footer */
+
+footer {
+    line-height: 1.5;
+    color: #A0A0A0;
+    font-size: 0.95rem;
+    padding: 0.25rem 1.5rem 1rem;
+}
+footer p{
+    margin: 0.75rem 0;
+}
+
+.footerlinks {
+	
+	 margin: 0.75rem 0;
+	color:inherit;
+}
+a:hover.footerlinks {
+	color:#DBDBDB;
+}
+
+.footermail{
+	color: inherit;
+}
+a:hover.footermail{
+	color:#DBDBDB;
+}
+
+footer p:not(.footerinks) {
+    margin: 0.75rem 0;
+}
+#prumerbutton{
+    background-color:#258ec6;
+}

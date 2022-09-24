@@ -6,18 +6,24 @@
 body {
 	font-family: Arial, sans-serif;
 	scroll-behavior: smooth;
+	background-color: #222;
+
+}
+.logininputbox{
+	background-color:rgb(135, 135, 135);
+	
 }
 
 header {
-	background-color: #795548;
+	background-color: #258ec6;
 	color: white;
 	padding: 1rem 0;
 }
 
-
 h1 {
 	font-size: initial;
 	display: inline;
+	color: white;
 }
 
 .top-row {
@@ -50,6 +56,8 @@ nav a, nav span {
 	padding: 1rem 1.5rem;
 	max-width: 700px;
 	margin: 0 auto;
+	background-color:#424242;
+	border-radius: 0px 0px 8px 8px;
 }
 
 .obsah:nth-of-type(2) {
@@ -73,7 +81,7 @@ nav a:hover {
 
 input:not([type=checkbox]), button {
 	-webkit-transition: 0.5s;
-	border: 1px solid #ccc;
+	border: 0px solid #ccc;
 	box-sizing: border-box;
 	margin-bottom: 1rem;
 	outline: none;
@@ -91,16 +99,31 @@ input:not([type=checkbox]):focus, button:focus {
 	outline: none;
 }
 
+
+
+input{
+	opacity:1;
+	border-radius: 2px;
+}
+input:hover{
+	opacity:0.8;
+}
 button {
-	background-color: #eee;
+	background-color: grey;
 	cursor: pointer;
 	padding: 0.25rem 1rem;
+	opacity: 0.8;
 	border-radius: 5px;
-
+	color:rgb(255, 255, 255);
+	text-size-adjust: 120%;
+	
 }
+
 
 button:hover {
 	background-color: #ccc;
+	opacity: 1;
+	transition-duration: 0.3s;
 }
 
 label {
@@ -109,20 +132,24 @@ label {
 	display: block;
 	font-size: 0.8rem;
 	text-align: left;
+	color: white;
 }
 
 .vysledek {
 	text-align: center;
 	line-height: 1.7;
+	color: white;
 }
+
 
 small {
 	margin-bottom: 1rem;
 	display: block;
+	color: #bbb;
 }
 
 small .link {
-	color: grey;
+	color: #aaa;
 	cursor: pointer;
 	text-decoration: underline;
 }
@@ -133,6 +160,8 @@ small .link {
 
 .uzky {
 	max-width: 400px;
+	color:white;
+	border-radius: 0px;
 }
 
 nav.uzky {

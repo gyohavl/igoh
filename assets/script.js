@@ -36,3 +36,58 @@ if ('serviceWorker' in navigator) {
 if (location.search.includes('?404=')) {
     document.getElementsByTagName('h1')[0].textContent += ' (stránka nenalezena)';
 }
+
+//dark-light mode switching ability
+
+var preferredmode;
+var systempreferredmode;
+var currentmode;
+
+//checks system default and previously used theme and calls swapCss
+	if(localStorage.getItem('preferredmode') == 'dark'){
+		swapCss("dark");
+	}
+	else if(localStorage.getItem('preferredmode') == 'light'){
+		swapCss("light");
+	}else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+	{
+		swapCss("dark");
+	}
+	else{
+		swapCss("light");
+	}
+
+//button press functioinality
+function buttonwaspressed(){
+	if(currentmode == "dark"){
+		swapCss("light")
+	}
+	else if(currentmode == "light"){
+		swapCss("dark");
+	}
+	else{
+		swapCss("dark");
+	}
+}
+
+//localStorage.getItem('preferredmode').addEventListener('change', swapCss(localStorage.getItem('preferredmode')));
+
+//setting modes and other stuff
+function swapCss(a){ 
+
+	if(a == "dark"){
+		document.getElementById('theme').setAttribute('href', 'assets/style_dark.css?v1.1');
+		document.getElementById("themebutton").setAttribute('src', "assets/images/switch_to_white.png?v1.1");
+		document.getElementById("themebuttonspan").innerText = "Light mode :(";
+		localStorage.setItem('preferredmode', 'dark');
+		currentmode = "dark";
+	}
+	else if(a == "light"){
+		document.getElementById('theme').setAttribute('href','assets/style_white.css?v1.1');
+		document.getElementById("themebutton").setAttribute('src', "assets/images/night-mode.png?v1.1");
+		document.getElementById("themebuttonspan").innerText = "Dark mode :)";
+		localStorage.setItem('preferredmode', 'light');
+		currentmode = "light";
+	}
+
+}	

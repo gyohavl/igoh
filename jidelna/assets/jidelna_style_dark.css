@@ -1,0 +1,331 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+}
+
+p{
+	color:#EAEAEA;
+	
+}
+body {
+	font-family: Calibri, Arial, sans-serif;
+	scroll-behavior: smooth;
+	background-color: #222;
+
+}
+
+header {
+	background-color: #245328;
+	color: white;
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+	z-index: 2;
+}
+
+header h1 {
+	font-size: 1.2rem;
+	display: inline-block;
+}
+
+
+nav {
+	font-size: 0;
+	max-width: 700px;
+	margin: 0 auto;
+}
+
+nav a {
+	color: white;
+	text-decoration: none;
+	padding: 15px 30px;
+	display: inline-block;
+	font-size: 1.2rem;
+	transition: background-color 0.2s;
+	position: relative;
+	line-height: 1;
+}
+
+nav a::before {
+	content: "";
+	height: 4px;
+	width: 0;
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	margin-left: 0;
+	background-color: rgba(0, 0, 0, 0.6);
+	transition: all 0.2s;
+}
+
+.float-right {
+	float: right;
+}
+
+/* nav a.current::before {
+	width: 100%;
+	margin-left: -50%;
+} */
+
+.login nav > a {
+	display: none;
+}
+
+nav a:not(.notransform), nav .link {
+	/* text-transform: uppercase; */
+}
+
+.nadpis {
+	font-size: 1.25em;
+	color: white;
+}
+
+.content {
+	padding: 15px 30px;
+	max-width: 700px;
+	margin: 0 auto;
+	background-color:  #424242;
+	border-radius: 0px 0px 8px 8px;
+}
+
+
+.login .content, .login nav {
+	max-width: 400px;
+}
+
+nav a:hover {
+	background-color: rgba(0, 0, 0, 0.2);
+	
+}
+
+table {
+	width: 100%;
+	margin-top: 10px;
+	color:white;
+	background-color: inherit;
+}
+
+table td:last-child {
+	width: 0;
+}
+
+input:not([type=checkbox]), button {
+	-webkit-transition: 0.5s;
+	border: 1px solid #000;
+	box-sizing: border-box;
+	margin-bottom: 5px;
+	outline: none;
+	padding: 5px 10px;
+	transition: all 0.2s;
+	width: 100%;
+	background-color:rgb(135, 135, 135);
+}
+
+input[type=password] {
+	border-color: #555;
+}
+
+input:not([type=checkbox]):hover, button:hover {
+	border-color: #ccc;
+}
+
+input:not([type=checkbox]):focus, button:focus {
+	border-color: #ccc;
+	outline: none;
+}
+
+input[type=submit], button {
+	background-color: rgb(135,135,135);
+	cursor: pointer;
+	padding: 5px 20px;
+}
+
+input[type=submit]:hover, button:hover{
+	background-color: #EEE;
+}
+
+table label {
+	display: block;
+	font-size: 0.75em;
+	text-align: left;
+}
+
+.meal {
+	margin-left: 0.5em;
+	display: flex;
+}
+
+.meal::before {
+	content: 'P) ';
+	right: 0;
+	position: relative;
+}
+
+.meal-0::before {
+	content: '1) ';
+}
+
+.meal-1::before {
+	content: '2) ';
+}
+
+.meal-checkbox {
+	padding: 1px 5px;
+}
+
+.meal label {
+	text-transform: lowercase;
+}
+
+.alergeny {
+	padding-left: 1em;
+	font-size: small;
+	color: ;
+}
+
+.alergeny::before {
+	content: '→ ';
+	right: 0;
+	position: relative;
+}
+
+.nevari label {
+	color: grey;
+}
+
+.day {
+	margin-bottom: 10px;
+	color: #cacaca;
+	/*background-color: rgb(131, 131, 131);
+	border-radius:8px;*/
+	
+}
+/*
+#upper {
+	margin-bottom: px;
+	color: #EAEAEA;
+	background-color: #333;
+}
+*/
+.day.disabled {
+	display: none;
+}
+
+.date {
+	/*text-decoration: solid;*/
+}
+
+.undefined, .grey {
+	color: grey;
+}
+
+.loader {
+	-webkit-animation: spin 1s linear infinite;
+	border: 5px solid #f3f3f3;
+	animation: spin 1s linear infinite;
+	border-radius: 50%;
+	border-top: 5px solid #429b4a;
+	height: 100px;
+	margin: 10px auto;
+	width: 100px;
+	position: relative;
+	top: 20vh;
+}
+
+@-webkit-keyframes spin {
+	0% {
+		-webkit-transform: rotate(0deg);
+	}
+
+	100% {
+		-webkit-transform: rotate(360deg);
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.over {
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: rgba(255, 255, 255, 0.8);
+	display: none;
+	z-index: 1;
+}
+
+body.loading .over {
+	display: block;
+}
+
+/* slider */
+p.grey {
+	padding-bottom: 20px;
+}
+
+.cont {
+	padding: 20px 0;
+	position: relative;
+}
+
+.cont:nth-of-type(2), .cont:nth-of-type(3) {
+	border-top: 1px solid #ccc;
+}
+
+.buttoncont button {
+	width: initial;
+	color: grey;
+}
+
+.buttoncont button:last-of-type {
+	float: right;
+}
+
+.slider {
+	padding: 50px 0 15px 0;
+	box-sizing: border-box;
+}
+
+.noUi-tooltip {
+	transition: opacity 0.1s;
+}
+
+.inactive .noUi-tooltip {
+	opacity: 0;
+}
+
+.noUi-connects {
+	background-color: deepskyblue; /* For browsers that do not support gradients */
+	background-image: linear-gradient(to right, white, #00ca00); /* Standard syntax (must be last) */
+}
+
+.noUi-connect:first-child {
+	background-color: transparent;
+	transition: background-color 0.2s;
+}
+
+.inactive .noUi-connect:first-child {
+	background-color: white;
+}
+
+.noUi-connect:last-child {
+	background-color: white;
+}
+
+button.active {
+	color: black;
+	border: black solid 1px;
+}
+
+.important {
+	font-weight: bold;
+}

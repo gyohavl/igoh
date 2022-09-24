@@ -79,10 +79,9 @@ function loadContent($bearer) {
 function echoHeader($subjects, $name) {
 	$result = '';
 	$jsData = '';
-	$result .= '<header><nav><div class="top-row"><h1><a href="..">iGOH</a><a href="#" onclick="fill(event, \'\', \'\');">Průměr známek</a></h1><div><a href="?odhlasit">' . $name . ' (odhlásit se)</a><a href="?redirect=next/prubzna.aspx">→ Bakaláři</a>';
+	$result .= '<header><nav><div class="top-row"><h1><a href="..">iGOH</a><a href="#" onclick="fill(event, \'\', \'\');">Průměr známek</a><h1><a id="modebuttontext" onClick="buttonwaspressed()">testujujaksebudechovatnahoře</a></h1><div><a href="?odhlasit">' . $name . ' (odhlásit se)</a><a href="?redirect=next/prubzna.aspx">→ Bakaláři</a>';
 	// $result .= substr($name, -3) == '8.B' ? '<a href="../fond">TF</a>' : '';
 	$result .= '</div></div>';
-    // $result .= '<div class="top-row"><a href="https://www.instagram.com/umzene_tusky/" onclick="gtag(\'event\', \'click\', {\'event_label\': \'https://www.instagram.com/umzene_tusky/?ref=prumer\',\'transport_type\': \'beacon\'});">Dražba oktávy B</a></div>';
 	// $result .= '<div class="bottom-row">';
 
 	foreach ($subjects as $key => $subject) {
@@ -121,13 +120,13 @@ function echoHeader($subjects, $name) {
 }
 
 function msg($text = '') {
-	$header = '<header><nav class="uzky"><h1><a href="..">iGOH</a><a href=".">Průměr známek</a></h1></nav></header>';
+	$header = '<header><nav class="uzky"><h1><a href="..">iGOH</a><a href=".">Průměr známek</a></h1><h1><a id="modebuttontext" onClick="buttonwaspressed()">#</a></h1></nav></header>';
 	$form = '
 		<form method="post">
 			<label for="username">Uživatelské jméno:</label>
-			<input type="text" id="username" name="username" autofocus>
+			<input class="logininputbox" type="text" id="username" name="username" autofocus>
 			<label for="password">Heslo:</label>
-			<input type="password" id="password" name="password">
+			<input class="logininputbox" type="password" id="password" name="password">
 			<button type="submit">Přihlásit se</button>
 		</form>
 		<small>Tento nástroj jsem vytvořil já, <a href="https://www.kolos.ga" class="link">Vít Kološ</a>. Studentům Gymnázia Olgy Havlové je k&nbsp;dispozici zcela zdarma. Pokud mi chceš pomoct s&nbsp;vývojem, <a href="mailto:vit.kolos@gmail.com" class="link">ozvi se mi</a>.</small>
@@ -160,7 +159,7 @@ function getIframe() {
 	<meta name="theme-color" content="#795548">
 	<meta property="og:image" content="https://www.igoh.tk/assets/og.png">
 
-	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" id="theme" href="#" type="text/css">
 
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-57876300-5"></script>
 	<script>

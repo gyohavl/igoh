@@ -25,7 +25,7 @@
     <meta name="msapplication-config" content="assets/icons/browserconfig.xml">
     <meta name="theme-color" content="#000000">
 
-    <link rel="stylesheet" href="assets/style.css" type="text/css">
+    <link id="theme"  rel="stylesheet" href="#" type="text/css"> 
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-57876300-5"></script>
     <script>
@@ -43,10 +43,11 @@
                 <div class="icon"><img src="assets/images/goh.svg" /></div>
                 <h1>iGOH</h1>
             </a>
+            
         </header>
         <main>
             <a href="prumer">
-                <div class="icon" style="background-color:#795548">
+                <div class="icon" id="prumerbutton" >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18px"
                         height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M18 4H6v2l6.5 6L6 18v2h12v-3h-7l5-5-5-5h7z"/></svg>
                 </div>
@@ -83,6 +84,13 @@
                         fill="white"><path d="M0 0h24v24H0z" fill="none" /><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" /></svg>
                 </div>
                 <span>Materiály</span>
+            </a>
+            
+            <a href="javascript:void(0)" onclick="buttonwaspressed()">
+                <div class="icon icon--light" style="background-color:white">
+                <img class="themebuttonicon" id="themebutton" src="#">
+                </div>
+                <span id="themebuttonspan">#</span>
             </a>
             <!-- <a href="fond" class="only8b" style="display:none">
                 <div class="icon icon--light" style="background-color:#ffee58">
