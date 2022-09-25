@@ -1,3 +1,5 @@
+@import '../../assets/theme.css';
+
 * {
 	box-sizing: border-box;
 	margin: 0;
@@ -26,12 +28,15 @@ nav {
 	font-size: 0;
 	max-width: 700px;
 	margin: 0 auto;
+    display: flex;
+    align-items: center;
 }
 
 nav a {
 	color: white;
 	text-decoration: none;
-	padding: 15px 30px;
+	padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
 	display: inline-block;
 	font-size: 1.2rem;
 	transition: background-color 0.2s;
@@ -300,3 +305,36 @@ button.active {
 .important {
 	font-weight: bold;
 }
+
+.theme-toggle {
+    --size: 1.2rem;
+    --icon-fill: white;
+    --icon-fill-hover: #ccc;
+    margin: 0 1rem;
+}
+
+[data-theme=dark] .theme-toggle {
+    --icon-fill: white;
+    --icon-fill-hover: #ccc;
+}
+
+[data-theme=dark] .theme-toggle, .theme-toggle:hover {
+    background-color: transparent;
+}
+
+[data-theme=dark] small {
+    color: #aaa !important;
+}
+
+[data-theme=dark] input[type=submit] {
+  background-color: #111;
+}
+
+[data-theme=dark] header {
+    background-color: #333;
+}
+
+[data-theme=dark] input:not([type=checkbox]), [data-theme=dark] button {
+    border-color: #444;
+}
+

@@ -1,3 +1,5 @@
+@import 'theme.css';
+
 * {
     box-sizing: border-box;
 }
@@ -125,9 +127,41 @@ footer {
     line-height: 1.5;
     color: #444;
     font-size: 0.95rem;
-    padding: 0.25rem 1.5rem 1rem;
+    /* padding: 0.25rem 1.5rem 1rem; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 footer p {
-    margin: 0.75rem 0;
+    margin: 0.75rem 1rem 0.75rem 0.5rem;
+}
+
+footer .theme-toggle {
+    --size: 1.35rem;
+}
+
+footer .theme-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* dark theme */
+[data-theme=dark] a {
+    color: #aaa;
+}
+
+[data-theme=dark] .theme-toggle {
+    --icon-fill: #aaa;
+    --icon-fill-hover: #fff;
+}
+
+[data-theme=dark] .icon {
+    filter: brightness(70%);
+    border-color: #444;
+}
+
+[data-theme=dark] a, [data-theme=dark] main a {
+    border-color: #333;
 }
