@@ -1,3 +1,4 @@
 .vscode
 bot/secrets.php
 adminer*
+.DS_Store
