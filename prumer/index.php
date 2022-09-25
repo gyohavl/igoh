@@ -172,7 +172,7 @@ function getIframe() {
     <meta name="theme-color" content="#795548">
     <meta property="og:image" content="https://www.igoh.tk/assets/og.png">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1">
 
     <script src="../assets/theme.js"></script>
 
