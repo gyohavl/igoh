@@ -139,6 +139,8 @@ footer p {
 
 footer .theme-toggle {
     --size: 1.35rem;
+    --icon-fill: #555;
+    --icon-fill-hover: #333;
 }
 
 footer .theme-toggle-container {
@@ -154,10 +156,10 @@ footer .theme-toggle-container {
 
 [data-theme=dark] .theme-toggle {
     --icon-fill: #aaa;
-    --icon-fill-hover: #fff;
+    --icon-fill-hover: #ddd;
 }
 
-[data-theme=dark] .icon {
+[data-theme=dark] .icon:not(.theme-toggle-container) {
     filter: brightness(70%);
     border-color: #444;
 }

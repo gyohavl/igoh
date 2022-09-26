@@ -1,6 +1,8 @@
 <?php
 if (isset($_GET["404"])) {
     http_response_code(404);
+} else {
+    http_response_code(200);
 }
 ?>
 <!doctype html>
@@ -10,7 +12,10 @@ if (isset($_GET["404"])) {
     <title><?= isset($_GET['404']) ? 'Stránka nenalezena | ' : '' ?>Materiály pro studenty</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script src="/assets/theme.js"></script>
     <style>
+        @import '/assets/theme.css';
+
         body {
             font-family: sans-serif;
             margin: 1.5rem 2rem;
@@ -23,7 +28,7 @@ if (isset($_GET["404"])) {
         }
 
         h1 a {
-            color: black;
+            color: currentColor;
         }
 
         li,
@@ -50,23 +55,31 @@ if (isset($_GET["404"])) {
 
         .kebab {
             cursor: pointer;
-            color: #555;
             font-weight: 600;
             padding: 0.5rem;
+        }
+
+        .kebab,
+        .kebab a {
+            color: #555;
         }
 
         .kebab__inner,
         .kebab__inner a {
             font-weight: normal;
-            color: grey;
             display: inline-block;
+        }
+
+        [data-theme=dark] .kebab,
+        [data-theme=dark] .kebab a {
+            color: #aaa;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1><a href="..">iGOH</a>: Materiály<?= isset($_GET['404']) ? ' (stránka nenalezena)' : '' ?></h1>
+        <h1><a href="/">iGOH</a>: Materiály<?= isset($_GET['404']) ? ' (stránka nenalezena)' : '' ?></h1>
         <?php
         $zapisy = '<details>
 			<summary><span>Zápisy Vítka Kološe</span></summary>

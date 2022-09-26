@@ -48,7 +48,7 @@
         // now this script can find and listen for clicks on the control
         document
             .querySelector('#theme-toggle')
-            .addEventListener('click', onClick)
+            ?.addEventListener('click', onClick)
     }
 
     // sync with system changes
