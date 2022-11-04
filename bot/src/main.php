@@ -28,9 +28,16 @@ function customCurl($url, $jsonData = null) {
         (isset($_GET['admin']) && $_GET['admin'] == $secrets['admin'])
         || (isset($_POST['admin']) && $_POST['admin'] == $secrets['admin'])
     ) {
+        // set or send
         return "{\"url\": \"$displayUrl\", \"data\": $jsonData, \"result\": $result}";
     } else {
-        return '{}';
+        if ($jsonData == null) {
+            // getting user info
+            return $result;
+        } else {
+            // send without auth
+            return '{}';
+        }
     }
 }
 

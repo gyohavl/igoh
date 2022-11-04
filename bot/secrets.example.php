@@ -6,6 +6,7 @@ return array(
     'dbname' => '',
     'admin_messenger_id' => '',
     'fb' => '',
+    'fb_verify_token' => '',
     'admin' => '',
     'canteen' => ''
 );

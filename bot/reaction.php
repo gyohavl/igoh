@@ -1,177 +1,138 @@
 <?php
 include('src/main.php');
-// todo: refactor, put verify token in secrets
 
-$endSubmit = true;
-$token = $secrets['fb'];
+ini_set('log_errors', 1);
+ini_set('error_log', '/tmp/php-reaction-error.log');
 
-$challenge = $_REQUEST['hub_challenge'];
-$verify_token = $_REQUEST['hub_verify_token'];
+// docker exec -it php-apache bash
+// cat /tmp/php-reaction-error.log
+// tail -f /tmp/php-reaction-error.log
 
-if ($verify_token === 'supltoken') {
-    echo $challenge;
-    exit;
-}
+if (isset($_REQUEST['hub_challenge'])) {
+    $challenge = $_REQUEST['hub_challenge'];
+    $verify_token = $_REQUEST['hub_verify_token'];
 
-$input = json_decode(file_get_contents('php://input'), true);
-$sender = $input['entry'][0]['messaging'][0]['sender']['id'];
-$message = $input['entry'][0]['messaging'][0]['message']['text'];
-$payload = $input['entry'][0]['messaging'][0]['postback']['payload'];
-$url = 'https://graph.facebook.com/v6.0/me/messages?access_token=' . $token;
-$ch = curl_init($url);
-$pv = curl_init($url);
-
-if (!empty($payload)) {
-    if ($payload == "ZACIT") {
-        $jsonData = '{
-			"recipient":{
-			"id":"' . $sender . '"
-			},
-			"message":{
-			"text":"Zadej prosím název třídy, pro kterou budeš chtít dostávat upozornění na změny v suplování (např. 4.B nebo 6.A). '
-            . preg_replace('/<br>/', '\n', "<br><br>") . 'Bot také umí posílat jídelníček. Pro více informací rozklikni nápovědu v menu ☰ nebo napiš otazník. '
-            . preg_replace('/<br>/', '\n', "<br><br>") . 'Pokud se během používání bota vyskytnou problémy, napiš mi na m.me/vit.kolos nebo na vit.kolos@gmail.com."
-			}
-        }';
-    } elseif ($payload == "ZADAT") {
-        $jsonData = '{
-			"recipient":{
-			"id":"' . $sender . '"
-			},
-			"message":{
-			"text":"Zadej prosím název třídy, pro kterou budeš chtít dostávat upozornění na změny v suplování (např. 4.B nebo 6.A)."
-			}
-        }';
-    } elseif ($payload == "NAPOVEDA") {
-        $message = "?";
-    } elseif ($payload == "ZRUSIT") {
-        $message = "x";
-    } elseif ($payload == "OBEDY") {
-        $message = "obědy";
-    } elseif ($payload == "OBEDYAL") {
-        $message = "obědy-a";
-    } elseif ($payload == "ZRUSITOBEDY") {
-        $message = "obědy-x";
+    if ($verify_token === $secrets['fb_verify_token']) {
+        echo $challenge;
+        exit;
     }
 }
 
-if ($message != "") {
-    if (preg_match("/\b\d\. ?\w\b/i", $message, $matches)) {
-        $trida = str_replace(' ', '', strtoupper($matches[0]));
+$input = json_decode(file_get_contents('php://input'), true);
+@$sender = $input['entry'][0]['messaging'][0]['sender']['id'];
+@$message = $input['entry'][0]['messaging'][0]['message']['text'];
+@$payload = $input['entry'][0]['messaging'][0]['postback']['payload'];
+$token = $secrets['fb'];
+$url = 'https://graph.facebook.com/v6.0/me/messages?access_token=' . $token;
 
-        if (in_array($trida, $availableClasses)) {
-            zapis("DELETE FROM bot_suplovani WHERE messenger_id = " . $sender . ";");
+$message = getMessage($sender, $payload, $message, $availableClasses, $token, $url, $secrets['admin_messenger_id']);
 
-            $user = curl_init("https://graph.facebook.com/v6.0/" . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
-            curl_setopt($user, CURLOPT_RETURNTRANSFER, 1);
-            $uzivatel = curl_exec($user);
-            $uzivatel = json_decode($uzivatel, true);
-
-            zapis("INSERT INTO bot_suplovani (messenger_id, first_name, last_name, picture, class) VALUES (" . $sender . ", '" . $uzivatel["first_name"] . "', '" . $uzivatel["last_name"] . "', '" . $uzivatel["profile_pic"] . "', '" . $trida . "')");
-
-            $file = getSuplovani();
-            $zprava = convertNoChanges(plain($trida, $file, true));
-            $zprava = "<br><br>Aktuální suplování:<br>" . $zprava;
-            $zprava = preg_replace('/<br>/', '\n', $zprava);
-
-            $jsonData = '{
-				"recipient":{
-				"id":"' . $sender . '"
-				},
-				"message":{
-				"text":"Budeš dostávat upozornění pro třídu ' . $trida . ' a to vždy, když se suplování změní na webu školy. Pro zrušení notifikací napiš x.' . $zprava . '"
-				}
-            }';
-        } else {
-            $jsonData = '{
-				"recipient":{
-				"id":"' . $sender . '"
-				},
-				"message":{
-				"text":"Zadej prosím platný název třídy ve tvaru X.Y (podporovány jsou třídy 1.–8.A, 1.–8.B, 1.–4.C)."
-				}
-            }';
+if (is_array($message)) {
+    foreach ($message as $jsonData) {
+        customCurl($url, $jsonData);
+    }
+} else {
+    $jsonData = '{
+        "recipient":{
+            "id":"' . $sender . '"
+        },
+        "message":{
+            "text":"' . $message . '"
         }
-    } elseif (preg_match("/\bobědy\b/i", $message, $matches) || preg_match("/\bobedy\b/i", $message, $matches)) {
-        if (preg_match("/\bobědy[-–]x\b/i", $message) || preg_match("/\bobedy[-–]x\b/i", $message)) {
-            zapis("DELETE FROM bot_canteen WHERE messenger_id = " . $sender . ";");
-            $jsonData = '{
-				"recipient":{
-				"id":"' . $sender . '"
-				},
-				"message":{
-				"text":"Pondělní zasílání jídelníčku bylo zrušeno."
-				}
-            }';
-        } else {
-            if (preg_match("/\bobědy[-–]a\b/i", $message, $matches) || preg_match("/\bobedy[-–]a\b/i", $message, $matches)) {
-                $alergenyVar = true;
+    }';
+    customCurl($url, $jsonData);
+}
+
+function getMessage($sender, $payload, $message, $availableClasses, $token, $url, $adminId) {
+    if (!empty($payload)) {
+        if ($payload == "ZACIT") {
+            return 'Zadej prosím název třídy, pro kterou budeš chtít dostávat upozornění na změny v suplování (např. 4.B nebo 6.A). '
+                . '\n\nBot také umí posílat jídelníček. Pro více informací rozklikni nápovědu v menu ☰ nebo napiš otazník. '
+                . '\n\nPokud se během používání bota vyskytnou problémy, napiš mi na m.me/vit.kolos nebo na vit.kolos@gmail.com."';
+        } elseif ($payload == "ZADAT") {
+            return 'Zadej prosím název třídy, pro kterou budeš chtít dostávat upozornění na změny v suplování (např. 4.B nebo 6.A).';
+        } elseif ($payload == "NAPOVEDA") {
+            $message = "?";
+        } elseif ($payload == "ZRUSIT") {
+            $message = "x";
+        } elseif ($payload == "OBEDY") {
+            $message = "obědy";
+        } elseif ($payload == "OBEDYAL") {
+            $message = "obědy-a";
+        } elseif ($payload == "ZRUSITOBEDY") {
+            $message = "obědy-x";
+        }
+    }
+
+    if ($message != "") {
+        if (preg_match("/\b\d\. ?\w\b/i", $message, $matches)) {
+            // subscribe suplovani
+            $class = str_replace(' ', '', strtoupper($matches[0]));
+
+            if (in_array($class, $availableClasses)) {
+                sql("DELETE FROM bot_suplovani WHERE messenger_id = " . $sender . ";", false);
+
+                $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+                $user = json_decode($userResponse, true);
+                sql("INSERT INTO bot_suplovani (messenger_id, first_name, last_name, picture, class) VALUES (" . $sender . ", '" . $user["first_name"] . "', '" . $user["last_name"] . "', '" . $user["profile_pic"] . "', '" . $class . "')", false);
+
+                $file = getSuplovani();
+                $messageToSend = convertNoChanges(plain($class, $file, true));
+                $messageToSend = '\n\nAktuální suplování:\n' . $messageToSend;
+                $messageToSend = str_replace('<br>', '\n', $messageToSend);
+
+                return 'Budeš dostávat upozornění pro třídu ' . $class . ' a to vždy, když se suplování změní na webu školy. Pro zrušení notifikací napiš x.' . $messageToSend;
             } else {
-                $alergenyVar = false;
+                return 'Zadej prosím platný název třídy ve tvaru X.Y (např. 4.B nebo 1.C, podporovány jsou třídy 1.–8.A, 1.–8.B, 1.–4.C).';
             }
-
-            zapis("DELETE FROM bot_canteen WHERE messenger_id = " . $sender . ";");
-
-            $user = curl_init("https://graph.facebook.com/v6.0/" . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
-            curl_setopt($user, CURLOPT_RETURNTRANSFER, 1);
-            $uzivatel = curl_exec($user);
-            $uzivatel = json_decode($uzivatel, true);
-
-            if ($alergenyVar) {
-                $alergenyDB = 1;
+        } elseif (preg_match("/\bobědy\b/i", $message, $matches) || preg_match("/\bobedy\b/i", $message, $matches)) {
+            // subscribe/cancel canteen
+            if (preg_match("/\bobědy[-–]x\b/i", $message) || preg_match("/\bobedy[-–]x\b/i", $message)) {
+                sql("DELETE FROM bot_canteen WHERE messenger_id = " . $sender . ";", false);
+                return 'Pondělní zasílání jídelníčku bylo zrušeno.';
             } else {
-                $alergenyDB = 0;
-            }
+                $allergens = (preg_match("/\bobědy[-–]a\b/i", $message, $matches) || preg_match("/\bobedy[-–]a\b/i", $message, $matches));
+                sql("DELETE FROM bot_canteen WHERE messenger_id = " . $sender . ";", false);
 
-            zapis("INSERT INTO bot_canteen (messenger_id, first_name, last_name, picture, allergens) VALUES (" . $sender . ", '" . $uzivatel["first_name"] . "', '" . $uzivatel["last_name"] . "', '" . $uzivatel["profile_pic"] . "', " . $alergenyDB . ")");
+                $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+                $user = json_decode($userResponse, true);
+                sql("INSERT INTO bot_canteen (messenger_id, first_name, last_name, picture, allergens) VALUES (" . $sender . ", '" . $user["first_name"] . "', '" . $user["last_name"] . "', '" . $user["profile_pic"] . "', " . intval($allergens) . ")", false);
 
-            $file = file_get_contents('https://jidelna.gyohavl.cz/faces/login.jsp');
-            $zpravy = obedy($alergenyVar, $file);
-            $endSubmit = false;
+                $file = file_get_contents('https://jidelna.gyohavl.cz/faces/login.jsp');
+                $messagesToSend = obedy($allergens, $file);
+                $jsonData = array();
 
-            foreach ($zpravy as $key => $zprava) {
-                if ($key == 0) {
-                    $alergenyText = "";
-                    if ($alergenyVar) {
-                        $alergenyText = " (se seznamem alergenů)";
+                foreach ($messagesToSend as $key => $messageToSend) {
+                    if ($key == 0) {
+                        $allergensText = $allergens ? ' (se seznamem alergenů)' : '';
+                        $messageToSend = 'Každé pondělí v 7:45 budeš dostávat aktuální jídelníček' . $allergensText . '. Pro zrušení notifikací napiš obědy-x.\n\n' . $messageToSend;
                     }
-                    $zprava = "Každé pondělí v 7:45 budeš dostávat aktuální jídelníček" . $alergenyText . ". Pro zrušení notifikací napiš obědy-x.<br><br>" . $zprava;
+
+                    $messageToSend = str_replace('<br>', '\n', $messageToSend);
+                    $messageToSend = str_replace('"', '\"', $messageToSend);
+                    $jsonData[] = '{
+                        "recipient":{
+                        "id":"' . $sender . '"
+                        },
+                        "message":{
+                        "text":"' . $messageToSend . '"
+                        }
+                    }';
                 }
 
-                $zprava = preg_replace('/<br>/', '\n', $zprava);
-                $zprava = preg_replace('/"/', '\"', $zprava);
-                $jsonData = '{
-					"recipient":{
-					"id":"' . $sender . '"
-					},
-					"message":{
-					"text":"' . $zprava . '"
-					}
-                }';
-                curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                $result = curl_exec($ch);
-                //error_log($result);
+                return $jsonData;
             }
-        }
-    } elseif ($message == "x" || $message == "X" || $message == "×") {
-        zapis("DELETE FROM bot_suplovani WHERE messenger_id = " . $sender . ";");
-        $jsonData = '{
-			"recipient":{
-			"id":"' . $sender . '"
-			},
-			"message":{
-			"text":"Upozornění byla zrušena."
-			}
-        }';
-    } elseif (preg_match("/\b(help)|(otazník)\b/i", $message) || $message == "?") {
-        $aktualniStav = array(
-            empty(vypis("SELECT * FROM bot_suplovani WHERE messenger_id = $sender;")),
-            empty(vypis("SELECT * FROM bot_canteen WHERE messenger_id = $sender;"))
-        );
-        $jsonData = '{
+        } elseif ($message == "x" || $message == "X" || $message == "×") {
+            // cancel suplovani
+            sql("DELETE FROM bot_suplovani WHERE messenger_id = " . $sender . ";", false);
+            return 'Pravidelné zasílání suplování bylo zrušeno.';
+        } elseif (preg_match("/\b(help)|(otazník)\b/i", $message) || $message == "?") {
+            // help
+            $currentState = array(
+                empty(vypis("SELECT * FROM bot_suplovani WHERE messenger_id = $sender;")),
+                empty(vypis("SELECT * FROM bot_canteen WHERE messenger_id = $sender;"))
+            );
+            $jsonData = '{
                 "recipient":{
                     "id":"' . $sender . '"
                 },
@@ -182,7 +143,7 @@ if ($message != "") {
                             "template_type":"button",
                             "text":"Zadej název třídy, pro kterou budeš chtít dostávat upozornění na změny v suplování (např. 4.B nebo 6.A). Pokud jsi tak již učinil(a) dříve, můžeš zasílání upozornění zrušit pomocí „x“. \n\nJestli bys ocenil(a), kdyby ti bot každé pondělí zasílal jídelníček, napiš „obědy“ nebo „obědy-a“ (pro jídelníček s alergeny). Pro zrušení zasílání jídelníčku napiš „obědy-x“.",
                             "buttons":[' .
-            ($aktualniStav[0] ? '{
+                ($currentState[0] ? '{
                                     "title": "Zasílat suplování",
                                     "type": "postback",
                                     "payload": "ZADAT"
@@ -191,7 +152,7 @@ if ($message != "") {
                                     "type": "postback",
                                     "payload": "ZRUSIT"
                                 },') .
-            ($aktualniStav[1] ? '{
+                ($currentState[1] ? '{
                                     "title": "Zasílat jídelníček",
                                     "type": "postback",
                                     "payload": "OBEDY"
@@ -201,63 +162,38 @@ if ($message != "") {
                                     "type": "postback",
                                     "payload": "OBEDYAL"
                                 }'
-                : '{
+                    : '{
                                     "title": "Zrušit jídelníček",
                                     "type": "postback",
                                     "payload": "ZRUSITOBEDY"
                                 }') .
-            ']
+                ']
                         }
                     }
                 }
 			}';
-    } elseif (preg_match("/\bid\b/i", $message)) {
-        $jsonData = '{
-			"recipient":{
-			"id":"' . $sender . '"
-			},
-			"message":{
-			"text":"' . $sender . '"
-			}
-        }';
-    } else {
-        $jsonData = '{
-			"recipient":{
-			"id":"' . $sender . '"
-			},
-			"message":{
-			"text":"Bohužel ti nerozumím, jsem přece jenom bot. Občas se tady však objeví Vítek, tak budeš mít třeba štěstí. Když napíšeš otazník, zobrazí se základní nápověda."
-			}
-        }';
+            return array($jsonData);
+        } elseif (preg_match("/\bid\b/i", $message)) {
+            return $sender;
+        } else {
+            // default
+            $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+            $user = json_decode($userResponse, true);
+            $message2 = str_replace('"', '\"', $message);
 
-        $user = curl_init("https://graph.facebook.com/v6.0/" . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
-        curl_setopt($user, CURLOPT_RETURNTRANSFER, 1);
-        $uzivatel = curl_exec($user);
-        $uzivatel = json_decode($uzivatel, true);
-        $message2 = preg_replace('/"/', '\"', $message);
+            $jsonData = '{
+                "recipient":{
+                "id":"' . $adminId . '"
+                },
+                "message":{
+                "text":"<' . $user["first_name"] . ' ' . $user["last_name"] . '>\n' . $message2 . '"
+                },
+                "messaging_type": "MESSAGE_TAG",
+                "tag": "ACCOUNT_UPDATE"
+            }';
+            customCurl($url, $jsonData);
 
-        $proVitka = '{
-			"recipient":{
-			"id":"' . $secrets['admin_messenger_id'] . '"
-			},
-			"message":{
-			"text":"<' . $uzivatel["first_name"] . ' ' . $uzivatel["last_name"] . '>' . preg_replace('/<br>/', '\n', "<br>") . '' . $message2 . '"
-			},
-            "messaging_type": "MESSAGE_TAG",
-            "tag": "ACCOUNT_UPDATE"
-        }';
-        curl_setopt($pv, CURLOPT_POST, 1);
-        curl_setopt($pv, CURLOPT_POSTFIELDS, $proVitka);
-        curl_setopt($pv, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-        curl_setopt($pv, CURLOPT_RETURNTRANSFER, 1);
-        $resultpv = curl_exec($pv);
+            return 'Bohužel ti nerozumím, jsem přece jenom bot. Občas se tady však objeví Vítek, tak budeš mít třeba štěstí. Když napíšeš otazník, zobrazí se základní nápověda.';
+        }
     }
-}
-
-if ($endSubmit) {
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    $result = curl_exec($ch);
 }
