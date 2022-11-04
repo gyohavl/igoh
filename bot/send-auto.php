@@ -50,6 +50,9 @@ if (isset($_POST['canteen']) && $_POST['canteen'] == $secrets['canteen']) {
     }
 
     echo '{}]';
+} else if (isset($_GET['check'])) {
+    header('Content-Type: text/plain');
+    echo preg_replace('/(\s)\s+/', '$1', html_entity_decode(strip_tags(getSuplovani())));
 } else {
 
     // #############
@@ -60,8 +63,7 @@ if (isset($_POST['canteen']) && $_POST['canteen'] == $secrets['canteen']) {
     $file = getSuplovani();
     $newMessages = array();
     // get old messages from db
-    $oldMessages = sql("SELECT * FROM bot_config WHERE name='messages'");
-    $oldMessages = isset($oldMessages[0]) ? $oldMessages[0]["value"] : false;
+    $oldMessages = getConfigValue('messages');
     $oldMessages = unserialize($oldMessages);
 
     if ($file !== false && !str_contains($file, '[ERROR]')) {
@@ -107,30 +109,59 @@ if (isset($_POST['canteen']) && $_POST['canteen'] == $secrets['canteen']) {
 
         // update db
         $smessages = serialize($newMessages);
-        $smessages = str_replace("\\n", "\\\\n", $smessages);
-        sql("UPDATE bot_config SET value='$smessages' WHERE name='messages';", false);
-        sql("UPDATE bot_config SET value='0' WHERE name='error';", false);
+        setConfigValue('messages', $smessages);
+
+        $errorStatusChanged = setErrorStatus(false);
+
+        if ($errorStatusChanged) {
+            // notify Vítek
+            $jsonData = '{
+                "recipient":{
+                "id":"' . $secrets['admin_messenger_id'] . '"
+                },
+                "message":{
+                "text":"[OK] funkčnost obnovena"
+                },
+                "messaging_type": "MESSAGE_TAG",
+                "tag": "ACCOUNT_UPDATE"
+            }';
+            $result = customCurl($url, $jsonData);
+        }
     } else {
-        // notify Vítek
-        $jsonData = '{
-            "recipient":{
-            "id":"' . $secrets['admin_messenger_id'] . '"
-            },
-            "message":{
-            "text":"' . $file . '"
-            },
-            "messaging_type": "MESSAGE_TAG",
-            "tag": "ACCOUNT_UPDATE"
-        }';
+        $errorStatusChanged = setErrorStatus(true);
 
-        $isError = sql("SELECT * FROM bot_config WHERE name='error'");
-        $isError = isset($isError[0]) ? ($isError[0]["value"] === '1') : false;
-
-        if (!$isError) {
+        if ($errorStatusChanged) {
+            // notify Vítek
+            $jsonData = '{
+                "recipient":{
+                "id":"' . $secrets['admin_messenger_id'] . '"
+                },
+                "message":{
+                "text":"' . $file . '"
+                },
+                "messaging_type": "MESSAGE_TAG",
+                "tag": "ACCOUNT_UPDATE"
+            }';
             echo customCurl($url, $jsonData);
-            sql("UPDATE bot_config SET value='1' WHERE name='error';", false);
         } else {
             echo '{"result":"' . $file . '"}';
         }
+    }
+}
+
+function setErrorStatus($present) {
+    $past = getConfigValue('error');
+    $past = ($past === '1');
+
+    if ($present == $past) {
+        return false;
+    } else {
+        if ($present) {
+            setConfigValue('error', '1');
+        } else {
+            setConfigValue('error', '0');
+        }
+
+        return true;
     }
 }

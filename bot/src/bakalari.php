@@ -1,8 +1,9 @@
 <?php
 
-include(__DIR__ . '/data/token.php');
 $suplovaniUrl = 'https://gyohavl.bakalari.cz';
 $cookiefile = tempnam(sys_get_temp_dir(), 'cookie');
+file_put_contents($cookiefile, getConfigValue('cookies'));
+$refreshToken = getConfigValue('token');
 
 function suplovaniCustomCurl($url) {
     global $curl_timeout, $cookiefile, $debug;
@@ -12,30 +13,13 @@ function suplovaniCustomCurl($url) {
     curl_setopt($c, CURLOPT_URL, $url);
     curl_setopt($c, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
-
-// todo
-
-    // $cookiejar = // get cookies from database
-
-    // file_put_contents($cookiefile, $cookiejar);
-
     curl_setopt($c, CURLOPT_COOKIEJAR, $cookiefile);
     curl_setopt($c, CURLOPT_COOKIEFILE, $cookiefile);
-
-    // $newcookies = file_get_contents($cookiefile);
-
-    // and now save cookies to database and clean up temp files
-
-
-
-
-
-    // curl_setopt($c, CURLOPT_COOKIEJAR, 'data/cookies');
-    // curl_setopt($c, CURLOPT_COOKIEFILE, 'data/cookies');
     $result = curl_exec($c);
     $http_code = curl_getinfo($c, CURLINFO_HTTP_CODE);
     $ct = curl_getinfo($c, CURLINFO_CONTENT_TYPE);
     curl_close($c);
+    setConfigValue('cookies', file_get_contents($cookiefile));
     return ($http_code == 200 && substr($ct, 0, 9) == 'text/html') ? $result : "";
 }
 
@@ -46,7 +30,7 @@ function suplovaniLoginConditions($creds) {
         if (isset($decoded->access_token)) {
             $bearer = $decoded->access_token;
             if (isset($decoded->refresh_token)) {
-                file_put_contents(__DIR__ . '/data/token.php', "<?php\n\$refreshToken = '$decoded->refresh_token';\n");
+                setConfigValue('token', $decoded->refresh_token);
             }
             return [true, $bearer];
         }

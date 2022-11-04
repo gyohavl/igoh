@@ -1,5 +1,6 @@
 <?php
 include('src/main.php');
+// todo: refactor, put verify token in secrets
 
 $endSubmit = true;
 $token = $secrets['fb'];
