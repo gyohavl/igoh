@@ -6,7 +6,7 @@ date_default_timezone_set('Europe/Prague');
 require_once('data/token.php');
 $url = 'https://gyohavl.bakalari.cz';
 
-function customCurl($url) {
+function customCurlSuplovani($url) {
     global $curl_timeout, $debug;
     $curl_timeout = isset($curl_timeout) ? $curl_timeout : 5;
     $c = curl_init();
@@ -87,7 +87,7 @@ function getSuplovani() {
     global $refreshToken, $url;
     $timestamp = getTimestamp() + 3600000 * 3; // adding span because of timezones
     $getParams = "__VIEWSTATE=1IuNGvMfVJc0ClwLMGp5LHyjIYQP0XN65Vie%2F%2B1UoJaBcULwNFo4GOSIP0pSYkuoiiwKSYsj1ZnjJsu4CzP5nAnu9pD4J0HMlBWHgKvyq3ywVJR9Sd8GRbXGMh%2F6YQZmPOdXr7bwE1wwX6nxJLpKU8nKeKqPqOTxszkquiFb9i7RqX2A5zE2IcAm6XBNa1WZ&DateEdit%24State={%26quot%3BrawValue%26quot%3B%3A%26quot%3B$timestamp%26quot%3B%2C%26quot%3BuseMinDateInsteadOfNull%26quot%3B%3Afalse}&DateEdit=&FilterDropDown_VI=1&FilterDropDown=";
-    $page = customCurl("$url/next/zmeny.aspx?$getParams");
+    $page = customCurlSuplovani("$url/next/zmeny.aspx?$getParams");
 
     if (strpos($page, 'Změny') === false) {
         $login = loginConditions([$refreshToken, false]);
@@ -100,10 +100,10 @@ function getSuplovani() {
 
                 if (strpos($trimmedWebToken, '{') === false) {
                     $redirLink = "$url/api/3/login/$trimmedWebToken?returnUrl=next/zmeny.aspx";
-                    $page = customCurl($redirLink);
+                    $page = customCurlSuplovani($redirLink);
 
                     if (strpos($page, 'Změny') !== false) {
-                        $page = customCurl("$url/next/zmeny.aspx?$getParams");
+                        $page = customCurlSuplovani("$url/next/zmeny.aspx?$getParams");
 
                         if (strpos($page, 'Změny') !== false) {
                             return $page;
