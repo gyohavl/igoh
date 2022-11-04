@@ -9,6 +9,7 @@ $verify_token = $_REQUEST['hub_verify_token'];
 
 if ($verify_token === 'supltoken') {
     echo $challenge;
+    exit;
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
@@ -67,7 +68,7 @@ if ($message != "") {
 
             zapis("INSERT INTO bot_suplovani (messenger_id, first_name, last_name, picture, class) VALUES (" . $sender . ", '" . $uzivatel["first_name"] . "', '" . $uzivatel["last_name"] . "', '" . $uzivatel["profile_pic"] . "', '" . $trida . "')");
 
-            $file = file_get_contents('https://www.igoh.tk/bot/suplovani/');
+            $file = getSuplovani();
             $zprava = convertNoChanges(plain($trida, $file, true));
             $zprava = "<br><br>Aktuální suplování:<br>" . $zprava;
             $zprava = preg_replace('/<br>/', '\n', $zprava);
