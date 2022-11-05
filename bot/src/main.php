@@ -60,13 +60,3 @@ function sql($sql, $fetch = true, $params = array()) {
     $query->execute($params);
     return $fetch ? $query->fetchAll() : true;
 }
-
-// deprecated
-function vypis($sql, $params = array()) {
-    return sql($sql, true, $params);
-}
-
-// deprecated
-function zapis($sql, $params = array()) {
-    return sql($sql, false, $params);
-}

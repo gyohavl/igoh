@@ -129,8 +129,8 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
         } elseif (preg_match("/\b(help)|(otazník)\b/i", $message) || $message == "?") {
             // help
             $currentState = array(
-                empty(vypis("SELECT * FROM bot_suplovani WHERE messenger_id = $sender;")),
-                empty(vypis("SELECT * FROM bot_canteen WHERE messenger_id = $sender;"))
+                empty(sql("SELECT * FROM bot_suplovani WHERE messenger_id = $sender;")),
+                empty(sql("SELECT * FROM bot_canteen WHERE messenger_id = $sender;"))
             );
             $jsonData = '{
                 "recipient":{
