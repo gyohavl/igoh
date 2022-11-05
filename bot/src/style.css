@@ -1,0 +1,36 @@
+body {
+    margin: 1rem;
+    font-family: sans-serif;
+}
+
+body > * {
+    max-width: 600px;
+    margin: auto;
+}
+
+h1 img {
+    width: 100%;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+li {
+    margin: 0.5rem 0;
+}
+
+.user {
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    border-radius: 25px;
+    display: inline-flex;
+    justify-content: center;
+    overflow: hidden;
+    margin-right: 5px;
+}
+
+.user img {
+    height: 100%;
+}
