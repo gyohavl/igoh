@@ -2,37 +2,49 @@
 include('src/main.php');
 
 $numberOfStudents = 590;
+$defaultPicture = '/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAoKCgoKCgsMDAsPEA4QDxYUExMUFiIYGhgaGCIzICUgICUgMy03LCksNy1RQDg4QFFeT0pPXnFlZXGPiI+7u/sBCgoKCgoKCwwMCw8QDhAPFhQTExQWIhgaGBoYIjMgJSAgJSAzLTcsKSw3LVFAODhAUV5PSk9ecWVlcY+Ij7u7+//CABEIAGQAZAMBIgACEQEDEQH/xAAaAAEAAgMBAAAAAAAAAAAAAAAABQYBAgME/9oACAEBAAAAALuAAAADtK9fFGAOln6EXCAS0yNangExLjFSwDvZ8kfAAJiXaVjkBNyg513zBLTIOVY0NrVuBEQ57rCA8lbJSbAaVN//xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oACAECEAAAAAAAAAAAAH//xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDEAAAAAAAAAAAAH//xAAvEAACAQAGBwcFAAAAAAAAAAABAgMABAURIDESEyEwQVFxECIjUoGRsUBCYWKh/9oACAEBAAE/AProYJJ2uRep5USzIwPEdmP42UNnVUrk4PWk9mSRrpxnTHLI7mGNppFRcyaRRJCiog2DBadVUg1iNbvMNxZSAvK54KAPXCyq6MpyKke9CCCRjspgNep4gEYSQASaMb2J5k/3HVptRMr5jj0NFZXUMDeCMFoVgRxmMHvv8bmzxW1+zwT5vkds+uCeEFLcL6TrMsja4MHJ47ip1EIA8ovbgvLDLDFOmi6g0rVVerPcdqnJsVm1YOdc+QNy454kmjKMPXkaSI0TsjZg4EUu6qBeWIA6mkaLEiouQAG4tSLakwGfdbBZ6aVaU3XhQW3NdTTqsvMC/wBsFlEiaQjPQ3MovilH6N2//8QAFBEBAAAAAAAAAAAAAAAAAAAAUP/aAAgBAgEBPwBH/8QAFBEBAAAAAAAAAAAAAAAAAAAAUP/aAAgBAwEBPwBH/9k=';
 
-function getPicture($data, $table, $token) {
-    $defaultPicture = 'data:image/jpeg;base64, /9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAoKCgoKCgsMDAsPEA4QDxYUExMUFiIYGhgaGCIzICUgICUgMy03LCksNy1RQDg4QFFeT0pPXnFlZXGPiI+7u/sBCgoKCgoKCwwMCw8QDhAPFhQTExQWIhgaGBoYIjMgJSAgJSAzLTcsKSw3LVFAODhAUV5PSk9ecWVlcY+Ij7u7+//CABEIAGQAZAMBIgACEQEDEQH/xAAaAAEAAgMBAAAAAAAAAAAAAAAABQYBAgME/9oACAEBAAAAALuAAAADtK9fFGAOln6EXCAS0yNangExLjFSwDvZ8kfAAJiXaVjkBNyg513zBLTIOVY0NrVuBEQ57rCA8lbJSbAaVN//xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oACAECEAAAAAAAAAAAAH//xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDEAAAAAAAAAAAAH//xAAvEAACAQAGBwcFAAAAAAAAAAABAgMABAURIDESEyEwQVFxECIjUoGRsUBCYWKh/9oACAEBAAE/AProYJJ2uRep5USzIwPEdmP42UNnVUrk4PWk9mSRrpxnTHLI7mGNppFRcyaRRJCiog2DBadVUg1iNbvMNxZSAvK54KAPXCyq6MpyKke9CCCRjspgNep4gEYSQASaMb2J5k/3HVptRMr5jj0NFZXUMDeCMFoVgRxmMHvv8bmzxW1+zwT5vkds+uCeEFLcL6TrMsja4MHJ47ip1EIA8ovbgvLDLDFOmi6g0rVVerPcdqnJsVm1YOdc+QNy454kmjKMPXkaSI0TsjZg4EUu6qBeWIA6mkaLEiouQAG4tSLakwGfdbBZ6aVaU3XhQW3NdTTqsvMC/wBsFlEiaQjPQ3MovilH6N2//8QAFBEBAAAAAAAAAAAAAAAAAAAAUP/aAAgBAgEBPwBH/8QAFBEBAAAAAAAAAAAAAAAAAAAAUP/aAAgBAwEBPwBH/9k=';
-    $id = $data['id'];
-    $picture = $data['picture'];
-
-    if (is_numeric($picture)) {
-        if ($picture != 0) {
-            sql("UPDATE `$table` SET `picture`=? WHERE `id`=?;", false, array($picture - 1, $id));
-            return $defaultPicture;
-        }
+function getPicture($data, $defaultPicture) {
+    if (str_starts_with($data['picture'], 'http')) {
+        return $data['picture'];
     } else {
-        if (isImageUrlWorking($picture)) {
-            return $picture;
+        return 'data:image/jpeg;base64, ' . $defaultPicture;
+    }
+}
+
+function regenerateImageUrls($token) {
+    foreach (array('bot_suplovani', 'bot_canteen') as $table) {
+        $data = sql("SELECT `id`, `messenger_id`, `first_name`, `picture` FROM `$table`;");
+
+        foreach ($data as $row) {
+            if (isset($row['picture']) && str_starts_with($row['picture'], 'http') && isImageUrlWorking($row['picture'])) {
+                if (empty($row['first_name'])) {
+                    $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $row['messenger_id'] . "?fields=first_name,last_name&access_token=" . $token);
+                    $user = json_decode($userResponse, true);
+
+                    if (isset($user['first_name'])) {
+                        sql("UPDATE `$table` SET `first_name`=?, `last_name`=? WHERE `id`=?;", false, array($user['first_name'], $user['last_name'], $row['id']));
+                        echo "opraveno jméno\n";
+                    } else {
+                        echo "v pořádku\n";
+                    }
+                } else {
+                    echo "v pořádku\n";
+                }
+            } else {
+                $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $row['messenger_id'] . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+                $user = json_decode($userResponse, true);
+
+                if (isset($user['profile_pic'])) {
+                    sql("UPDATE `$table` SET `first_name`=?, `last_name`=?, `picture`=? WHERE `id`=?;", false, array($user['first_name'], $user['last_name'], $user['profile_pic'], $row['id']));
+                    echo "opraveno\n";
+                } else {
+                    sql("UPDATE `$table` SET `picture`=? WHERE `id`=?;", false, array('', $row['id']));
+                    echo "chyba\n";
+                }
+            }
         }
     }
-
-    $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $data['messenger_id'] . "?fields=profile_pic&access_token=" . $token);
-    $user = json_decode($userResponse, true);
-
-    if (isset($user['profile_pic'])) {
-        $url = $user['profile_pic'];
-
-        if (isImageUrlWorking($url)) {
-            sql("UPDATE `$table` SET `picture`=? WHERE `id`=?;", false, array($url, $id));
-            return $url;
-        }
-    }
-
-    sql("UPDATE `$table` SET `picture`=? WHERE `id`=?;", false, array(rand(8, 15), $id));
-    return $defaultPicture;
 }
 
 function isImageUrlWorking($url) {
@@ -56,10 +68,20 @@ function czechUsers($userNumber) {
     }
 }
 
-if (!empty($_GET['picture'])) {
-    header('Content-type: image/jpg');
-    $table = isset($_GET['canteen']) ? 'bot_canteen' : 'bot_suplovani';
-    getPicture(intval($_GET['picture']), $table, $secrets['fb']);
+if (isset($_GET['default'])) {
+    header('Content-Type: image/jpg');
+    echo base64_decode($defaultPicture);
+    exit;
+} else if (isset($_GET['regenerate']) || isset($_POST['regenerate'])) {
+    if (
+        (isset($_GET['admin']) && $_GET['admin'] == $secrets['admin'])
+        || (isset($_POST['admin']) && $_POST['admin'] == $secrets['admin'])
+    ) {
+        header('Content-Type: text/plain');
+        echo regenerateImageUrls($secrets['fb']);
+    } else {
+        echo '<!doctype html><html><body><form method="post"><input name="admin" placeholder="klíč administrátora" /><input type="hidden" name="regenerate" value="1" /><input type="submit" value="odeslat" /></form></body></html>';
+    }
     exit;
 }
 
@@ -135,7 +157,7 @@ shuffle($ids['canteen']);
             <?php
             if (isset($_GET['pictures'])) {
                 foreach ($ids['suplovani'] as $id) {
-                    echo '<span class="user"><img src="' . getPicture($data['suplovani'][$id], 'bot_suplovani', $secrets['fb']) . '" alt="uživatel" /></span>';
+                    echo '<span class="user"><img src="' . getPicture($data['suplovani'][$id], $defaultPicture) . '" onerror="this.src=\'?default=1\';" alt="uživatel" /></span>';
                 }
             }
             ?>
@@ -158,7 +180,7 @@ shuffle($ids['canteen']);
             <?php
             if (isset($_GET['pictures'])) {
                 foreach ($ids['canteen'] as $id) {
-                    echo '<span class="user"><img src="' . getPicture($data['canteen'][$id], 'bot_canteen', $secrets['fb']) . '" alt="uživatel" /></span>';
+                    echo '<span class="user"><img src="' . getPicture($data['canteen'][$id], $defaultPicture) . '" onerror="this.src=\'?default=1\';" alt="uživatel" /></span>';
                 }
             }
             ?>
