@@ -3,13 +3,22 @@ include('src/main.php');
 
 $numberOfStudents = 590;
 
-function getPicture($id, $table, $token) {
-    $result = sql("SELECT * FROM `$table` WHERE `id`=?;", true, array($id));
+function base64GetPicture($data, $table, $token) {
+    ob_start();
+    getPicture($data, $table, $token);
+    $image_data = ob_get_contents();
+    ob_end_clean();
+    return base64_encode($image_data);
+}
+
+function getPicture($data, $table, $token) {
     $success = false;
 
-    if (!empty($result[0])) {
-        if (isset($result[0]['picture'])) {
-            $picture = $result[0]['picture'];
+    if (!empty($data)) {
+        $id = $data['id'];
+
+        if (isset($data['picture'])) {
+            $picture = $data['picture'];
 
             if (is_numeric($picture)) {
                 if ($picture != 0) {
@@ -26,21 +35,22 @@ function getPicture($id, $table, $token) {
             }
         }
 
-        $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $result[0]['messenger_id'] . "?fields=profile_pic&access_token=" . $token);
+        $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $data['messenger_id'] . "?fields=profile_pic&access_token=" . $token);
         $user = json_decode($userResponse, true);
 
         if (isset($user['profile_pic'])) {
             $url = $user['profile_pic'];
             $success = downloadImage($url);
         }
-    }
 
-    if ($success) {
-        sql("UPDATE `$table` SET `picture`=? WHERE `id`=?;", false, array($url, $id));
-        return;
-    } else {
-        sql("UPDATE `$table` SET `picture`=? WHERE `id`=?;", false, array(rand(8, 15), $id));
-        defaultImage();
+        if ($success) {
+            sql("UPDATE `$table` SET `picture`=? WHERE `id`=?;", false, array($url, $id));
+            return;
+        } else {
+            sql("UPDATE `$table` SET `picture`=? WHERE `id`=?;", false, array(rand(8, 15), $id));
+            defaultImage();
+            return;
+        }
     }
 }
 
@@ -81,15 +91,17 @@ if (!empty($_GET['picture'])) {
     exit;
 }
 
-$suplovani = sql("SELECT `id`, `messenger_id`, `class` FROM `bot_suplovani`;");
-$canteen = sql("SELECT `id`, `messenger_id`, `allergens` FROM `bot_canteen`;");
+$suplovani = sql("SELECT `id`, `messenger_id`, `class`, `picture` FROM `bot_suplovani`;");
+$canteen = sql("SELECT `id`, `messenger_id`, `allergens`, `picture` FROM `bot_canteen`;");
 $ids = array('suplovani' => array(), 'canteen' => array());
-$mids = array();
+$data = array('suplovani' => array(), 'canteen' => array());
+$uids = array();
 $counter = array('class' => array(), 'allergens' => array(0, 0));
 
 foreach ($suplovani as $row) {
-    $ids['suplovani'][] = $row['id'];
-    $mids[] = $row['messenger_id'];
+    $ids['suplovani'][] = $row['messenger_id'];
+    $data['suplovani'][$row['messenger_id']] = $row;
+    $uids[] = $row['messenger_id'];
 
     if (!isset($counter['class'][$row['class']])) {
         $counter['class'][$row['class']] = 0;
@@ -99,12 +111,13 @@ foreach ($suplovani as $row) {
 }
 
 foreach ($canteen as $row) {
-    $ids['canteen'][] = $row['id'];
-    $mids[] = $row['messenger_id'];
+    $ids['canteen'][] = $row['messenger_id'];
+    $data['canteen'][$row['messenger_id']] = $row;
+    $uids[] = $row['messenger_id'];
     $counter['allergens'][$row['allergens']]++;
 }
 
-$uniqueUsers = count(array_unique($mids));
+$uniqueUsers = count(array_unique($uids));
 shuffle($ids['suplovani']);
 shuffle($ids['canteen']);
 ?>
@@ -125,16 +138,16 @@ shuffle($ids['canteen']);
     </header>
     <section>
         <ul>
-            <li><a href="..">zpět na iGOH</a>
-            <li><a href="http://m.me/suplovanigoh">otevřít bota</a>
-            <li><a href=".">základní informace o botovi</a>
-                <?php
-                if (isset($_GET['pictures'])) {
-                    echo '<li><b><a href="?">skrýt profilové fotografie uživatelů</a></b></li>';
-                } else {
-                    echo '<li><b><a href="?pictures=1">zobrazit profilové fotografie uživatelů</a></b></li>';
-                }
-                ?>
+            <li><a href="..">zpět na iGOH</a></li>
+            <li><a href="http://m.me/suplovanigoh">otevřít bota</a></li>
+            <li><a href=".">základní informace o botovi</a></li>
+            <?php
+            if (isset($_GET['pictures'])) {
+                echo '<li><b><a href="?">skrýt profilové fotografie uživatelů</a></b></li>';
+            } else {
+                echo '<li><b><a href="?pictures=1">zobrazit profilové fotografie uživatelů</a></b></li>';
+            }
+            ?>
         </ul>
     </section>
     <section>
@@ -147,10 +160,10 @@ shuffle($ids['canteen']);
     <section>
         <h2>Suplování</h2>
         <div>
-            <?
+            <?php
             if (isset($_GET['pictures'])) {
                 foreach ($ids['suplovani'] as $id) {
-                    echo '<span class="user"><img src="?picture=' . $id . '" alt="Uživatel č. ' . $id . '"/></span>';
+                    echo '<span class="user"><img src="data:image/jpeg;base64, ' . base64GetPicture($data['suplovani'][$id], 'bot_suplovani', $secrets['fb']) . '" alt="uživatel" /></span>';
                 }
             }
             ?>
@@ -173,7 +186,7 @@ shuffle($ids['canteen']);
             <?php
             if (isset($_GET['pictures'])) {
                 foreach ($ids['canteen'] as $id) {
-                    echo '<span class="user"><img src="?picture=' . $id . '&canteen=1" alt="Uživatel č. ' . $id . '"/></span>';
+                    echo '<span class="user"><img src="data:image/jpeg;base64, ' . base64GetPicture($data['canteen'][$id], 'bot_canteen', $secrets['fb']) . '" alt="uživatel" /></span>';
                 }
             }
             ?>
