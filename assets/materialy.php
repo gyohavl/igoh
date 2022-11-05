@@ -81,15 +81,7 @@ if (isset($_GET["404"])) {
     <div class="container">
         <h1><a href="/">iGOH</a>: Materiály<?= isset($_GET['404']) ? ' (stránka nenalezena)' : '' ?></h1>
         <?php
-        $zapisy = '<details>
-			<summary><span>Zápisy Vítka Kološe</span></summary>
-			<ul>
-				<li><a href="https://drive.google.com/drive/folders/1-PCBU3vUn7lCqsebNp0f1KbjsCqc7Pk1?usp=sharing">sexta</a></li>
-				<li><a href="https://drive.google.com/drive/folders/1-HBIFa0uipgozbAD7bM4hPgYwLBN5p-7?usp=sharing">septima</a></li>
-				<li><a href="https://drive.google.com/drive/folders/1T7OBse-4oGzC-Iq_JPcfnWzU7VkhbZhf?usp=sharing">oktáva</a></li>
-			</ul>
-		</details>';
-        echo getDirectory(getcwd(), dirname($_SERVER['PHP_SELF']), $zapisy);
+        echo getDirectory(getcwd(), dirname($_SERVER['PHP_SELF']));
 
         function getDirectory($dir, $urlpath, $add = '') {
             $directories = array();
@@ -139,6 +131,7 @@ if (isset($_GET["404"])) {
                 'd' => 'Dějepis',
                 'nizsi' => 'Nižší gymnázium',
                 'vyssi' => 'Vyšší gymnázium',
+                'zapisky-vk' => 'Zápisky Vítka Kološe',
                 'spolecne' => 'Společné soubory',
                 'fr' => 'Francouzský jazyk',
                 'ikt' => 'IKT',
