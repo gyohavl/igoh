@@ -1,5 +1,5 @@
 <?php
-include('src/main.php');
+include('src/admin.php');
 
 $url = 'https://graph.facebook.com/v6.0/me/messenger_profile?access_token=' . $secrets['fb'];
 $jsonData = '{
@@ -37,5 +37,5 @@ if (isset($_POST['admin']) && $_POST['admin'] == $secrets['admin']) {
     header('Content-Type: application/json');
     echo customCurl($url, $jsonData);
 } else {
-    echo '<!doctype html><html><body><form method="post"><input name="admin" placeholder="klíč administrátora" /><input type="submit" value="odeslat" /></form></body></html>';
+    echo $adminPasswordForm;
 }
