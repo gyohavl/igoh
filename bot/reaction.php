@@ -102,6 +102,10 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
                 $messagesToSend = obedy($allergens, $file);
                 $jsonData = array();
 
+                if (count($messagesToSend) == 0) {
+                    $messagesToSend = array('Jídelníček momentálně není dostupný.');
+                }
+
                 foreach ($messagesToSend as $key => $messageToSend) {
                     if ($key == 0) {
                         $allergensText = $allergens ? ' (se seznamem alergenů)' : '';
