@@ -80,7 +80,7 @@ if (isset($_GET['default'])) {
         header('Content-Type: text/plain');
         echo regenerateImageUrls($secrets['fb']);
     } else {
-        echo '<!doctype html><html><body><form method="post"><input name="admin" placeholder="klíč administrátora" /><input type="hidden" name="regenerate" value="1" /><input type="submit" value="odeslat" /></form></body></html>';
+        echo '<!doctype html><html><body><form method="post"><input type="password" name="admin" placeholder="klíč administrátora" /><input type="hidden" name="regenerate" value="1" /><input type="submit" value="odeslat" /></form></body></html>';
     }
     exit;
 }
@@ -139,7 +139,7 @@ shuffle($ids['canteen']);
             if (isset($_GET['pictures'])) {
                 echo '<li><b><a href="?">skrýt profilové fotografie uživatelů</a></b></li>';
             } else {
-                echo '<li><b><a href="?pictures=1">zobrazit profilové fotografie uživatelů</a></b></li>';
+                // echo '<li><b><a href="?pictures=1">zobrazit profilové fotografie uživatelů</a></b></li>';
             }
             ?>
         </ul>
@@ -171,6 +171,10 @@ shuffle($ids['canteen']);
                     echo "<li>$class … $userNumber $userText</li>";
                 }
             }
+
+            $suplovaniTotal = count($ids['suplovani']);
+            $stText = czechUsers($suplovaniTotal);
+            echo "<li class=\"total\">celkem … $suplovaniTotal $stText</li>";
             ?>
         </ul>
     </section>
@@ -193,6 +197,9 @@ shuffle($ids['canteen']);
             $userNumber = $counter['allergens'][1];
             $userText = czechUsers($userNumber);
             echo "<li>s alergeny … $userNumber $userText</li>";
+            $canteenTotal = count($ids['canteen']);
+            $ctText = czechUsers($canteenTotal);
+            echo "<li class=\"total\">celkem … $canteenTotal $ctText</li>";
             ?>
         </ul>
     </section>

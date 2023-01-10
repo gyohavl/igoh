@@ -20,6 +20,10 @@ li {
     margin: 0.5rem 0;
 }
 
+.total {
+    margin-top: 1rem;
+}
+
 .user {
     height: 30px;
     width: 30px;
