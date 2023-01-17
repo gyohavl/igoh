@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="cs" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Průměr známek – iGOH</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Výpočet průměru známek pro studenty Gymnázia Olgy Havlové.">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/icons/site.webmanifest">
+    <meta name="theme-color" content="#795548">
+    <meta property="og:image" content="https://www.igoh.tk/assets/og.png">
+
+    <link rel="stylesheet" href="style.css?v=1">
+
+    <script src="../assets/theme.js"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-57876300-5"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'UA-57876300-5', {
+            'anonymize_ip': true,
+            'client_storage': 'none'
+        });
+    </script>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="top-row" style="margin-bottom:0">
+                <h1><a href="..">iGOH</a><a href="#">Průměr známek</a></h1>
+                <button class="theme-toggle" id="theme-toggle" title="Přepnout světlý/tmavý režim" aria-label="light"
+                    aria-live="polite">
+                    <svg class="sun-and-moon" aria-hidden="true" width="24" height="24"
+                        viewBox="0 0 24 24"><mask class="moon" id="moon-mask"><rect x="0" y="0" width="100%" height="100%" fill="white"></rect><circle cx="24" cy="10" r="6" fill="black"></circle></mask><circle class="sun" cx="12" cy="12" r="6" mask="url(#moon-mask)" fill="currentColor"></circle><g class="sun-beams" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></g></svg>
+                </button>
+                <div><a href="#" onclick="fill(event, '', '');">vymazat známky a váhy</a><a href=".">přihlásit se</a></div>
+            </div>
+            <div id="menu"></div>
+            <script>let data = [];</script>
+        </nav>
+    </header>
+    <div class="obsah">
+        <div class="rolovaci">
+            <label for="znamky">Známky:</label>
+            <input type="tel" id="znamky" onkeyup="keyUp(this, event);">
+            <label for="vahy">Váhy:</label>
+            <input type="tel" id="vahy" onkeyup="keyUp(this, event);">
+        </div>
+        <small id="napoveda"></small>
+        <button type="button" onclick="calculate();">Vypočítat průměr</button>
+        <div id="vysledek" class="vysledek"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

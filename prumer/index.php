@@ -143,6 +143,7 @@ function msg($text = '') {
 			<button type="submit">Přihlásit se</button>
 		</form>
 		<small>Tento nástroj jsem vytvořil já, <a href="https://www.kolos.ga" class="link">Vít Kološ</a>. Studentům Gymnázia Olgy Havlové je k&nbsp;dispozici zcela zdarma. Pokud mi chceš pomoct s&nbsp;vývojem, <a href="mailto:vit.kolos@gmail.com" class="link">ozvi se mi</a>.</small>
+		<small>Nejsi studentem GOH? Přejdi do <a href="anonymni.html" class="link">anonymní verze aplikace</a>.</small>
 		';
     return $header . wrap($text) . wrap($form) . wrap(getIframe());
 }
