@@ -61,9 +61,12 @@ function getAverageMark(znamky, vahy, justNumber) {
 }
 
 function keyUp(obj, ev) {
+    var position = ev.target.selectionStart;
     obj.value = obj.value.replace(/[\s\*\,\;]/g, '\t');
     obj.value = obj.value.replace(/\+/g, '-');
     obj.value = obj.value.replace(/\#/g, 'N');
+    ev.target.selectionEnd = position;
+
     if (ev.keyCode === 13) {
         calculate();
     } else if (!changed) {
