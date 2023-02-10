@@ -29,7 +29,7 @@ function loginConditions($creds) {
 		if (isset($decoded->access_token)) {
 			$bearer = $decoded->access_token;
 			$_SESSION['t'] = urlencode($bearer);
-			
+
 			// if ($creds[2] || !$creds[1]) {
 			setcookie('prumer_refresh_token', $decoded->refresh_token, time() + (86400 * 30), '/');
 			// }
@@ -38,6 +38,11 @@ function loginConditions($creds) {
 		} else {
 			$result = msg($creds[1] ? 'Špatné jméno nebo heslo.' : 'Přihlášení vypršelo. (c)');
 			$result = $loginResponse[2] ? msg('Nastala chyba na serveru Bakalářů. ' . $loginResponse[2]) : $result;
+
+            if (!empty($_POST['debug'])) {
+                $result .= '<code>' . $loginResponse[1] . '</code>';
+            }
+
 			$_SESSION['t'] = '';
 			setcookie('prumer_refresh_token', '', 10, '/');
 		}

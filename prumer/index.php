@@ -140,6 +140,7 @@ function msg($text = '') {
 			<input type="text" id="username" name="username" autofocus>
 			<label for="password">Heslo:</label>
 			<input type="password" id="password" name="password">
+            ' . (!empty($_GET['debug']) ? '<input type="hidden" name="debug" value="1">' : '') . '
 			<button type="submit">Přihlásit se</button>
 		</form>
 		<small>Tento nástroj jsem vytvořil já, <a href="https://www.kolos.ga" class="link">Vít Kološ</a>. Studentům Gymnázia Olgy Havlové je k&nbsp;dispozici zcela zdarma. Pokud mi chceš pomoct s&nbsp;vývojem, <a href="mailto:vit.kolos@gmail.com" class="link">ozvi se mi</a>.</small>
@@ -203,7 +204,7 @@ function getIframe() {
     echo $htmlResult;
     ?>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=1"></script>
 </body>
 
 </html>

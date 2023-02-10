@@ -78,9 +78,16 @@ function keyUp(obj, ev) {
 skrytNapovedu();
 showMenu();
 
-if (window.history.replaceState) {
-    window.history.replaceState(null, null, window.location.href.replace(/\?.*/g, ''));
-}
+try {
+    let url = new URL(location);
+    let original = url.href;
+    url.searchParams.delete('fbclid');
+    url.searchParams.delete('odhlasit');
+    let replace = url.href;
+    if (original != replace) {
+        history.replaceState(null, '', replace);
+    }
+} catch (error) { }
 
 function napoveda(e) {
     e.preventDefault();
