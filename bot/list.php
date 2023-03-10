@@ -5,14 +5,14 @@ if (isset($_POST['admin']) && $_POST['admin'] === $secrets['admin']) {
     $filter = isset($_POST['filter']) ? $_POST['filter'] : "all";
     $classes = isset($_POST['classes']) ? $_POST['classes'] : "";
     echo '<!doctype html><html lang="cs"><head><meta charset="utf-8"><title>Seznam uživatelů bota</title>'
-        . '<style>body{font-family:sans-serif;}table{border-collapse:collapse}td,th{border:1px solid #ccc; padding: 0.5rem 1rem;}</style>'
+        . '<style>body{font-family:sans-serif;}table{border-collapse:collapse}td,th{border:1px solid #ccc; padding: 0.5rem 1rem;}.selected{font-weight:bold;}</style>'
         . '</head><body>';
     echo '<form method="post"><input type="hidden" name="admin" value="' . $_POST['admin'] . '" /><ul>'
-        . '<li><button type="submit" name="filter" value="all">všichni uživatelé</button>'
-        . '<li><button type="submit" name="filter" value="suplovani">odběratelé suplování</button>'
-        . '<li><button type="submit" name="filter" value="canteen">odběratelé jídelníčku</button>'
+        . '<li><button ' . filterButtonAttributes('all') . '>všichni uživatelé</button>'
+        . '<li><button ' . filterButtonAttributes('suplovani') . '>odběratelé suplování</button>'
+        . '<li><button ' . filterButtonAttributes('canteen') . '>odběratelé jídelníčku</button>'
         . '</form><form method="post"><input type="hidden" name="admin" value="' . $_POST['admin'] . '" />'
-        . '<li><input type="text" name="classes" placeholder="pouze tyto třídy (oddělené čárkou)" value="' . $classes . '" style="width:200px" /><button type="submit" name="filter" value="classes">zobrazit</button>'
+        . '<li><input type="text" name="classes" placeholder="pouze tyto třídy (oddělené čárkou)" value="' . $classes . '" style="width:200px" /><button ' . filterButtonAttributes('classes') . '>zobrazit</button>'
         . '</ul></form>';
     echo '<ul><li><form method="post" action="send-manual.php"><input type="hidden" name="admin" value="' . $_POST['admin'] . '" />'
         . '<input type="hidden" name="filter" value="' . $filter . '" />'
@@ -37,4 +37,17 @@ function listUsers($params) {
     }
 
     return $returnHtml;
+}
+
+function filterButtonAttributes($name) {
+    $class = '';
+
+    if (
+        (!empty($_POST['filter']) && $_POST['filter'] === $name)
+        || (empty($_POST['filter']) && $name == 'all')
+    ) {
+        $class = ' class="selected"';
+    }
+
+    return 'type="submit" name="filter" value="' . $name . '"' . $class;
 }

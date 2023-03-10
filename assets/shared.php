@@ -64,11 +64,13 @@ function sendRequest($creds = false, $token = '', $page = '') {
 
 	if ($creds) {
 		curl_setopt($ch, CURLOPT_POST, 1);
+        $cd0 = rawurlencode($creds[0]);
+        $cd1 = rawurlencode($creds[1]);
 
 		if ($creds[1]) {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=ANDR&grant_type=password&username=$creds[0]&password=$creds[1]");
+			curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=ANDR&grant_type=password&username=$cd0&password=$cd1");
 		} else {
-			curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=ANDR&grant_type=refresh_token&refresh_token=$creds[0]");
+			curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=ANDR&grant_type=refresh_token&refresh_token=$cd0");
 		}
 
 		$headers[] = 'Accept: application/json';
