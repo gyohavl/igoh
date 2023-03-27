@@ -1,12 +1,12 @@
 // send events to google analytics
-document.querySelectorAll('a').forEach(el => {
-    el.addEventListener('click', (event) => {
-        gtag('event', 'click', {
-            'event_label': el,
-            'transport_type': 'beacon'
-        });
-    })
-});
+// document.querySelectorAll('a').forEach(el => {
+//     el.addEventListener('click', (event) => {
+//         gtag('event', 'click', {
+//             'event_label': el,
+//             'transport_type': 'beacon'
+//         });
+//     })
+// });
 
 // getclass for 8.B
 fetch('prumer/?getclass=1').then(r => r.text()).then(t => {
