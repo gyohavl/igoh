@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="cs" dir="ltr">
+
+<head>
+    <!--
+        TODO:
+        * zajistit (aspoň trochu) expiraci uložených tokenů
+        * přepsat management stavu, aby byl na jednom místě
+        * oddělit zobrazování dat od správy stavu
+        * refaktorovat původní script.js
+        * dodělat chytré přesměrování (?redirect= i adresy typu /b/něco)
+        * doplnit implementaci ?getclass=1 (pro úvodní stránku iGOH)
+     -->
+    <meta charset="utf-8">
+    <title>Průměr známek – iGOH</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Výpočet průměru známek pro studenty Gymnázia Olgy Havlové.">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/icons/site.webmanifest">
+    <meta name="theme-color" content="#795548">
+    <meta property="og:image" content="https://www.igoh.tk/assets/og.png">
+
+    <link rel="stylesheet" href="style.css?v=1">
+
+    <script src="../assets/theme.js"></script>
+
+    <!-- Matomo -->
+    <script>
+        var _paq = window._paq = window._paq || [];
+        _paq.push(['disableCookies']);
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function () {
+            var u = "//www.kolos.ga/matomo/";
+            _paq.push(['setTrackerUrl', u + 'matomo.php']);
+            _paq.push(['setSiteId', '2']);
+            var d = document,
+                g = d.createElement('script'),
+                s = d.getElementsByTagName('script')[0];
+            g.async = true;
+            g.src = u + 'matomo.js';
+            s.parentNode.insertBefore(g, s);
+        })();
+    </script>
+    <!-- End Matomo Code -->
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="top-row">
+                <h1><a href="..">iGOH</a><a href="#" onclick="fill(event, '', '');">Průměr známek</a></h1>
+                <button class="theme-toggle" id="theme-toggle" title="Přepnout světlý/tmavý režim" aria-label="light"
+                    aria-live="polite">
+                    <svg class="sun-and-moon" aria-hidden="true" width="24" height="24"
+                        viewBox="0 0 24 24"><mask class="moon" id="moon-mask"><rect x="0" y="0" width="100%" height="100%" fill="white"></rect><circle cx="24" cy="10" r="6" fill="black"></circle></mask><circle class="sun" cx="12" cy="12" r="6" mask="url(#moon-mask)" fill="currentColor"></circle><g class="sun-beams" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></g></svg>
+                </button>
+                <div>
+                    <a href="#" id="fullname" onclick="logout(event, '', '');"></a><a href="?redirect=next/prubzna.aspx">→ Bakaláři</a>
+                </div>
+            </div>
+            <div id="menu"></div>
+        </nav>
+    </header>
+    <div class="obsah uzky" id="loggedout">
+        <form onsubmit="formSubmit();" action="javascript:void(0);">
+            <p id="error"></p>
+            <label for="username">Uživatelské jméno:</label>
+            <input type="text" id="username" name="username" autofocus>
+            <label for="password">Heslo:</label>
+            <input type="password" id="password" name="password">
+            <label for="remember">Neodhlašovat:</label><input type="checkbox" id="remember" checked>
+
+            <button type="submit">Přihlásit se</button>
+        </form>
+        <small>Tento nástroj jsem vytvořil já, <a href="https://www.kolos.ga" class="link">Vít Kološ</a>. Studentům
+            Gymnázia
+            Olgy Havlové je k&nbsp;dispozici zcela zdarma. Pokud mi chceš pomoct s&nbsp;vývojem, <a
+                href="mailto:vit.kolos@gmail.com" class="link">ozvi se mi</a>.</small>
+        <small>Nejsi studentem GOH? Přejdi do <a href="anonymni.html" class="link">anonymní verze
+                aplikace</a>.</small>
+    </div>
+    <div class="obsah" id="loggedin" style="display: none;">
+        <div class="rolovaci">
+            <label for="znamky">Známky:</label>
+            <input type="tel" id="znamky" onkeyup="keyUp(this, event);">
+            <label for="vahy">Váhy:</label>
+            <input type="tel" id="vahy" onkeyup="keyUp(this, event);">
+        </div>
+        <small id="napoveda"></small>
+        <button type="button" onclick="calculate();">Vypočítat průměr</button>
+        <div id="vysledek" class="vysledek"></div>
+    </div>
+
+    <script src="script.js?v=1"></script>
+    <script>
+        let data = [];
+        const bakaUrl = 'https://gyohavl.bakalari.cz/';
+        const nameField = document.getElementById('fullname');
+        const errField = document.getElementById('error');
+        const loggedoutDiv = document.getElementById('loggedout');
+        const loggedinDiv = document.getElementById('loggedin');
+
+        loadEndpoints();
+        // removeOldLocalStorageItems();
+
+        function loadEndpoints() {
+            callEndpoint('user').then(r => {
+                if (r.ok) {
+                    nameField.textContent = r.FullName;
+                    loggedoutDiv.style.display = 'none';
+                    loggedinDiv.style.display = 'block';
+                } else {
+                    loggedoutDiv.style.display = 'block';
+                    loggedinDiv.style.display = 'none';
+                }
+            })
+
+            callEndpoint('marks').then(r => {
+                if (r.ok) {
+                    data = r.Subjects.map(s => ({
+                        predmet: s.Subject.Abbrev,
+                        znamky: s.Marks.map(m => m.MarkText).join(' ') + ' ',
+                        vahy: s.Marks.map(m => m.Weight).join(' ') + ' '
+                    }));
+
+                    showMenu();
+                }
+            })
+        }
+
+        function formSubmit() {
+            errField.textContent = '';
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            processLogin(username, password, remember).then(loggedIn => {
+                if (loggedIn) {
+                    loadEndpoints();
+                } else {
+                    errField.textContent = 'chyba přihlášení :(';
+                }
+            });
+        }
+
+        function logout(e) {
+            if (e) {
+                e.preventDefault();
+            }
+
+            delVal('baka_access_token');
+            delVal('baka_refresh_token');
+            data = [];
+            loadEndpoints();
+            showMenu();
+        }
+
+        // event processing
+        async function processLogin(username, password, remember) {
+            const loginResponse = await loginRequest(false, username, password);
+
+            if (loginResponse.ok) {
+                setVal('baka_access_token', loginResponse.access_token, 0.5);
+
+                if (remember) {
+                    setVal('baka_refresh_token', loginResponse.refresh_token, 30 * 24);
+                }
+
+                return true;
+            }
+        }
+
+        async function callEndpoint(endpointName) {
+            const accessToken = getVal('baka_access_token');
+            const refreshToken = getVal('baka_refresh_token');
+
+            if (accessToken) {
+                const firstResponse = await endpointRequest(endpointName, accessToken);
+
+                if (firstResponse.ok) {
+                    return firstResponse;
+                }
+            }
+
+            if (refreshToken) {
+                const loginResponse = await loginRequest(refreshToken);
+
+                if (loginResponse.ok) {
+                    setVal('baka_access_token', loginResponse.access_token, 0.5);
+                    setVal('baka_refresh_token', loginResponse.refresh_token, 30 * 24);
+                    return await endpointRequest(endpointName, loginResponse.access_token);
+                } else {
+                    return { ok: false };
+                }
+            }
+
+            return { ok: false };
+        }
+
+        // requests
+        async function loginRequest(token, username, password) {
+            const response = await fetch(bakaUrl + 'api/login', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: token ? `client_id=ANDR&grant_type=refresh_token&refresh_token=${token}`
+                    : `client_id=ANDR&grant_type=password&username=${username}&password=${password}`
+            });
+            const responseObject = await response.json();
+            return { ok: response.ok, ...responseObject };
+        }
+
+        async function endpointRequest(endpointName, accessToken) {
+            const response = await fetch(bakaUrl + 'api/3/' + endpointName, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + accessToken
+                }
+            });
+            const responseObject = await response.json();
+            return { ok: response.ok, ...responseObject };
+        }
+
+        // storage
+        function removeOldLocalStorageItems() {
+            const itemsInUse = ['baka_access_token', 'baka_refresh_token'];
+            const saved = itemsInUse.map(item => localStorage.getItem(item));
+            localStorage.clear();
+            itemsInUse.forEach((item, index) => saved[index] ? localStorage.setItem(item, saved[index]) : false);
+        }
+
+        function getVal(name) {
+            return localStorage.getItem(name);
+        }
+
+        function setVal(name, value, exhours) {
+            // todo
+            localStorage.setItem(name, value);
+        }
+
+        function delVal(name) {
+            localStorage.removeItem(name);
+        }
+
+    </script>
+</body>
+
+</html>
