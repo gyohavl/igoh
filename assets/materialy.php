@@ -171,9 +171,9 @@ if (isset($_GET["404"])) {
 
         function summaryClicked(route, isOpen, el) {
             if (isOpen) {
-                window.history.pushState({}, '', route.substring(0, route.slice(0, -1).lastIndexOf('/') + 1));
+                window.history.replaceState({}, '', route.substring(0, route.slice(0, -1).lastIndexOf('/') + 1));
             } else {
-                window.history.pushState({}, '', route);
+                window.history.replaceState({}, '', route);
             }
 
             el.setAttribute('onclick', `summaryClicked('${route}', ${!isOpen}, this);`);
