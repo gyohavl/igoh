@@ -12,7 +12,7 @@ $htmlResult = main();
 // redirect
 if (isset($_GET["redirect"])) {
     $urlNoApi = substr($url, 0, -4);
-    header("Location: $urlNoApi" . $_GET["redirect"]);
+    header("Location: $urlNoApi/login?ReturnUrl=" . $_GET["redirect"]);
     exit;
 }
 // end redirect
