@@ -87,8 +87,7 @@ function suplovaniGetTimestamp() {
 function getSuplovani() {
     global $refreshToken, $suplovaniUrl;
     $timestamp = suplovaniGetTimestamp() + 3600000 * 3; // adding span because of timezones
-    $viewstate = "dDNt%2BDWKlsRnxghv6epZXYl5fFZ5iLe%2BOIi7D5zUptAlafN7U4oDGabYJuiiwTmmrYFYFLaVPLONZFoeTApsdrKaqfg5Dt3cfFTBYb8aYqsKMo6OTn1nJACLDoFr%2FQlGzu%2B%2BtYfNlIgY0BKvgu%2B6b35TZ37iPTsjTR0aXx%2BFmZasM8rV6r8nekrjnW8xpjbD";
-    $getParams = "DateEdit%24State={%26quot%3BrawValue%26quot%3B%3A%26quot%3B$timestamp%26quot%3B%2C%26quot%3BuseMinDateInsteadOfNull%26quot%3B%3Afalse}&DateEdit=&FilterDropDown_VI=1&FilterDropDown=&__VIEWSTATE=$viewstate";
+    $getParams = "DateEdit%24State={%26quot%3BrawValue%26quot%3B%3A%26quot%3B$timestamp%26quot%3B%2C%26quot%3BuseMinDateInsteadOfNull%26quot%3B%3Afalse}&DateEdit=&FilterDropDown_VI=1&FilterDropDown=&__VIEWSTATE=";
     $page = suplovaniCustomCurl("$suplovaniUrl/next/zmeny.aspx?$getParams");
 
     if (strpos($page, 'Změny') === false) {
