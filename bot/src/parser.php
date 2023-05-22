@@ -141,6 +141,7 @@ function obedy($alergeny, $file) {
                         }
                         $pokrm = trim(preg_replace("/^(Polévka )?(.*?),(.*)/", "$3", trim($jidlo)));
                         $pokrm = preg_replace('/,$/', '', $pokrm);
+                        $pokrm = preg_replace('/ , /', ', ', $pokrm);
                         $pokrm = preg_replace('/\s"(\S*?)"/', ' „$1“', $pokrm);
                         $a = "";
                         if ($alergeny && $meal->childNodes->item(3)->childNodes->item(1) !== null) {
