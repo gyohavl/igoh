@@ -100,7 +100,7 @@ if (isset($_GET["404"])) {
 <body>
     <div class="container">
         <h1><a href="/">iGOH</a>: Materiály<?= isset($_GET['404']) ? ' (stránka nenalezena)' : '' ?></h1>
-        <p>Tyto materiály vznikly mezi lety 2017 a 2022. <br>Jsou dílem studentů „béčka“, kteří studovali v letech 2014–2022.</p>
+        <p>Tyto materiály vznikly mezi lety 2017 a 2022.</p>
         <?php
         echo getDirectory(getcwd(), dirname($_SERVER['PHP_SELF']));
 
