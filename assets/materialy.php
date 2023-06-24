@@ -157,7 +157,15 @@ if (isset($_GET["404"])) {
                 'fr' => 'Francouzský jazyk',
                 'ikt' => 'IKT',
                 'vv' => 'Výtvarná výchova',
-                'zsv' => 'Základy společenských věd'
+                'zsv' => 'Základy společenských věd',
+                '1-prima' => 'Prima',
+                '2-sekunda' => 'Sekunda',
+                '3-tercie' => 'Tercie',
+                '4-kvarta' => 'Kvarta',
+                '5-kvinta' => 'Kvinta',
+                '6-sexta' => 'Sexta',
+                '7-septima' => 'Septima',
+                '8-oktava' => 'Oktáva'
             );
 
             return isset($names[$originalName]) ? $names[$originalName] : $originalName;
