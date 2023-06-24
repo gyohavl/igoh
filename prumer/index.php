@@ -143,7 +143,7 @@ function msg($text = '') {
             ' . (!empty($_GET['debug']) ? '<input type="hidden" name="debug" value="1">' : '') . '
 			<button type="submit">Přihlásit se</button>
 		</form>
-		<small>Tento nástroj jsem vytvořil já, <a href="https://www.kolos.ga" class="link">Vít Kološ</a>. Studentům Gymnázia Olgy Havlové je k&nbsp;dispozici zcela zdarma. Pokud mi chceš pomoct s&nbsp;vývojem, <a href="mailto:vit.kolos@gmail.com" class="link">ozvi se mi</a>.</small>
+		<small>Tento nástroj jsem vytvořil já, <a href="https://www.vitkolos.cz" class="link">Vít Kološ</a>. Studentům Gymnázia Olgy Havlové je k&nbsp;dispozici zcela zdarma. Pokud mi chceš pomoct s&nbsp;vývojem, <a href="mailto:vit.kolos@gmail.com" class="link">ozvi se mi</a>.</small>
 		<small>Nejsi studentem GOH? Přejdi do <a href="anonymni.html" class="link">anonymní verze aplikace</a>.</small>
 		';
     return $header . wrap($text) . wrap($form) . wrap(getIframe());
@@ -185,7 +185,7 @@ function getIframe() {
         _paq.push(['trackPageView']);
         _paq.push(['enableLinkTracking']);
         (function() {
-            var u = "//www.kolos.ga/matomo/";
+            var u = "//www.vitkolos.cz/matomo/";
             _paq.push(['setTrackerUrl', u + 'matomo.php']);
             _paq.push(['setSiteId', '2']);
             var d = document,
