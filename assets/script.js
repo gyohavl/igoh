@@ -8,13 +8,10 @@
 //     })
 // });
 
-// getclass for 8.B
-fetch('prumer/?getclass=1').then(r => r.text()).then(t => {
-    if (t == '8.B') {
-        document.querySelectorAll('.only8b').forEach(el => el.removeAttribute('style'));
-    }
-    let classes = { '': 'ZL', '???': 'ZL', '1.A': 'ZO', '1.B': 'ZP', '1.C': 'ZQ', '2.A': 'ZL', '2.B': 'ZM', '2.C': 'ZN', '3.A': 'ZI', '3.B': 'ZJ', '3.C': 'ZK', '4.A': 'ZE', '4.B': 'ZF', '4.C': 'ZG', '5.A': 'ZB', '5.B': 'ZC', '6.A': 'Z8', '6.B': 'Z9', '7.A': 'Z5', '7.B': 'Z6', '8.A': 'Z2', '8.B': 'Z3' };
-    document.getElementById('ttpublic').setAttribute('href', `/b/timetable/public/Actual/class/${classes[t]}%3FTouchMode=1`);
+// getclass for timetable link
+fetch('prumer/?getclass=2').then(r => r.text()).then(t => {
+    t = t || 'ZR';
+    document.getElementById('ttpublic').setAttribute('href', `/b/timetable/public/Actual/class/${t}%3FTouchMode=1`);
 });
 
 // console log for devs

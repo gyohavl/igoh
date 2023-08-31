@@ -17,12 +17,12 @@ if (isset($_GET["redirect"])) {
 }
 // end redirect
 
-// 8.B (get class)
+// getclass
 if (isset($_GET["getclass"])) {
     header("Content-Type: text/plain");
     exit;
 }
-// end 8.B (get class)
+// end getclass
 
 function loadContent($bearer) {
     global $url;
@@ -45,6 +45,7 @@ function loadContent($bearer) {
 
     $userResponse = sendRequest(false, $bearer, '3/user');
     $name = '???';
+    $classId = '';
 
     if ($userResponse[0]) {
         $decodedU = json_decode($userResponse[1]);
@@ -52,15 +53,29 @@ function loadContent($bearer) {
         if (isset($decodedU->FullName)) {
             $name = $decodedU->FullName;
         }
+
+        if (isset($decodedU->Class->Id)) {
+            $classId = $decodedU->Class->Id;
+        }
     }
 
-    // 8.B (get class)
-    if (isset($_GET["getclass"]) && $name != '???') {
+    // getclass
+    if (isset($_GET['getclass']) && $name != '???') {
         header("Content-Type: text/plain");
-        echo substr($name, -3);
+
+        switch ($_GET['getclass']) {
+            case 2:
+                echo $classId;
+                break;
+
+            default:
+                echo substr($name, -3);
+                break;
+        }
+
         exit;
     }
-    // end 8.B (get class)
+    // end getclass
 
     $marksResponse = sendRequest(false, $bearer, '3/marks');
 
