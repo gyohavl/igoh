@@ -59,7 +59,7 @@ if (isset($_POST['canteen']) && $_POST['canteen'] == $secrets['canteen']) {
     // # SUPLOVÁNÍ #
     // #############
 
-    $url = 'https://graph.facebook.com/v6.0/me/messages?access_token=' . $secrets['fb'];
+    $url = $fbGraphApiPath . 'me/messages?access_token=' . $secrets['fb'];
     $file = getSuplovani();
     $newMessages = array();
     // get old messages from db

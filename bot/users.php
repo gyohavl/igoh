@@ -13,13 +13,15 @@ function getPicture($data, $defaultPicture) {
 }
 
 function regenerateImageUrls($token) {
+    global $fbGraphApiPath;
+
     foreach (array('bot_suplovani', 'bot_canteen') as $table) {
         $data = sql("SELECT `id`, `messenger_id`, `first_name`, `picture` FROM `$table`;");
 
         foreach ($data as $row) {
             if (isset($row['picture']) && str_starts_with($row['picture'], 'http') && isImageUrlWorking($row['picture'])) {
                 if (empty($row['first_name'])) {
-                    $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $row['messenger_id'] . "?fields=first_name,last_name&access_token=" . $token);
+                    $userResponse = customCurl($fbGraphApiPath . $row['messenger_id'] . "?fields=first_name,last_name&access_token=" . $token);
                     $user = json_decode($userResponse, true);
 
                     if (isset($user['first_name'])) {
@@ -32,7 +34,7 @@ function regenerateImageUrls($token) {
                     echo "v pořádku\n";
                 }
             } else {
-                $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $row['messenger_id'] . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+                $userResponse = customCurl($fbGraphApiPath . $row['messenger_id'] . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
                 $user = json_decode($userResponse, true);
 
                 if (isset($user['profile_pic'])) {

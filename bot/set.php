@@ -1,7 +1,7 @@
 <?php
 include('src/admin.php');
 
-$url = 'https://graph.facebook.com/v6.0/me/messenger_profile?access_token=' . $secrets['fb'];
+$url = $fbGraphApiPath . 'me/messenger_profile?access_token=' . $secrets['fb'];
 $jsonData = '{
 	"persistent_menu": [
 		{

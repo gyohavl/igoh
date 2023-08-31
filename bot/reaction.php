@@ -23,7 +23,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 @$message = $input['entry'][0]['messaging'][0]['message']['text'];
 @$payload = $input['entry'][0]['messaging'][0]['postback']['payload'];
 $token = $secrets['fb'];
-$url = 'https://graph.facebook.com/v6.0/me/messages?access_token=' . $token;
+$url = $fbGraphApiPath . 'me/messages?access_token=' . $token;
 
 $message = getMessage($sender, $payload, $message, $availableClasses, $token, $url, $secrets['admin_messenger_id']);
 
@@ -44,6 +44,8 @@ if (is_array($message)) {
 }
 
 function getMessage($sender, $payload, $message, $availableClasses, $token, $url, $adminId) {
+    global $fbGraphApiPath;
+
     if (!empty($payload)) {
         if ($payload == "ZACIT") {
             return 'Zadej prosím název třídy, pro kterou budeš chtít dostávat upozornění na změny v suplování (např. 4.B nebo 6.A). '
@@ -72,7 +74,7 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
             if (in_array($class, $availableClasses)) {
                 sql("DELETE FROM bot_suplovani WHERE messenger_id = " . $sender . ";", false);
 
-                $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+                $userResponse = customCurl($fbGraphApiPath . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
                 $user = json_decode($userResponse, true);
                 sql("INSERT INTO bot_suplovani (messenger_id, first_name, last_name, picture, class) VALUES (" . $sender . ", '" . $user["first_name"] . "', '" . $user["last_name"] . "', '" . $user["profile_pic"] . "', '" . $class . "')", false);
 
@@ -94,7 +96,7 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
                 $allergens = (preg_match("/\bobědy[-–]a\b/i", $message, $matches) || preg_match("/\bobedy[-–]a\b/i", $message, $matches));
                 sql("DELETE FROM bot_canteen WHERE messenger_id = " . $sender . ";", false);
 
-                $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+                $userResponse = customCurl($fbGraphApiPath . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
                 $user = json_decode($userResponse, true);
                 sql("INSERT INTO bot_canteen (messenger_id, first_name, last_name, picture, allergens) VALUES (" . $sender . ", '" . $user["first_name"] . "', '" . $user["last_name"] . "', '" . $user["profile_pic"] . "', " . intval($allergens) . ")", false);
 
@@ -181,7 +183,7 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
             return $sender;
         } else {
             // default
-            $userResponse = customCurl("https://graph.facebook.com/v6.0/" . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+            $userResponse = customCurl($fbGraphApiPath . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
             $user = json_decode($userResponse, true);
             $message2 = str_replace('"', '\"', $message);
 

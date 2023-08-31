@@ -64,7 +64,7 @@ if (isset($_POST['admin']) && $_POST['admin'] === $secrets['admin']) {
             $sendTo = array_keys(processFilters($_POST));
         }
 
-        $url = 'https://graph.facebook.com/v6.0/me/messages?access_token=' . $secrets['fb'];
+        $url = $fbGraphApiPath . 'me/messages?access_token=' . $secrets['fb'];
         echo '[';
 
         foreach ($sendTo as $messenger_id) {
