@@ -16,7 +16,7 @@ $jsonData = '{
 				{
 					"type": "web_url",
 					"title": "iGOH",
-					"url": "https://www.igoh.tk/",
+					"url": "https://www.igoh.cz/",
 					"webview_height_ratio": "full"
 				}
 			]

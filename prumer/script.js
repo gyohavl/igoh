@@ -50,7 +50,7 @@ function getAverageMark(znamky, vahy, justNumber) {
 			<br>
 			<small style="color:grey">
 				Pomohla ti tato kalkulačka? Nenech si to pro sebe a
-				<a class="link" href=\"https://www.facebook.com/dialog/share?app_id=1796482747030911&display=page&href=http%3A%2F%2Fwww.igoh.tk%2Fprumer%2F&redirect_uri=https%3A%2F%2Fwww.igoh.tk%2Fprumer%2F\">
+				<a class="link" href=\"https://www.facebook.com/dialog/share?app_id=1796482747030911&display=page&href=http%3A%2F%2Fwww.igoh.cz%2Fprumer%2F&redirect_uri=https%3A%2F%2Fwww.igoh.cz%2Fprumer%2F\">
 					sdílej ji na Facebooku!
 				</a>
 			</small>

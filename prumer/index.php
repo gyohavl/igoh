@@ -169,7 +169,7 @@ function wrap($it) {
 }
 
 function getIframe() {
-    // return '<div style="height:57px;overflow:hidden"><iframe src="https://www.igoh.tk/#content" style="border:0;height:67px;width:100%;opacity:.5"></iframe></div>';
+    // return '<div style="height:57px;overflow:hidden"><iframe src="https://www.igoh.cz/#content" style="border:0;height:67px;width:100%;opacity:.5"></iframe></div>';
     return '';
 }
 ?>
@@ -187,7 +187,7 @@ function getIframe() {
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
     <link rel="manifest" href="/assets/icons/site.webmanifest">
     <meta name="theme-color" content="#795548">
-    <meta property="og:image" content="https://www.igoh.tk/assets/og.png">
+    <meta property="og:image" content="https://www.igoh.cz/assets/og.png">
 
     <link rel="stylesheet" href="style.css?v=1">
 
