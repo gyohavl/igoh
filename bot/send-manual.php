@@ -73,7 +73,7 @@ if (isset($_POST['admin']) && $_POST['admin'] === $secrets['admin']) {
                 "id":"' . $messenger_id . '"
                 },
                 "message":{
-                "text":"' . $_POST['message'] . '"
+                "text":' . json_encode($_POST['message']) . '
                 },
                 "messaging_type": "MESSAGE_TAG",
                 "tag": "ACCOUNT_UPDATE"
