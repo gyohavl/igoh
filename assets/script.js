@@ -31,7 +31,7 @@ if ('serviceWorker' in navigator) {
 
 const params = new URL(document.location).searchParams;
 
-if (params.get('redirect') == 'tk') {
+if (params.get('from') == 'tk') {
     document.getElementsByTagName('h1')[0].textContent += '.cz';
 }
 
