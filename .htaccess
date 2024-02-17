@@ -26,6 +26,6 @@ RewriteRule (.*) /?404=$1 [R]
 <filesMatch "\.(ico|jpg|jpeg|png|svg|js|css)$">
         FileETag None
     <ifModule mod_headers.c>
-        Header set Cache-Control "max-age=86400, public"
+        Header set Cache-Control "max-age=3600, public"
     </ifModule>
 </filesMatch>
