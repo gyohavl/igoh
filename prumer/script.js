@@ -84,8 +84,13 @@ try {
     url.searchParams.delete('fbclid');
     url.searchParams.delete('odhlasit');
     let replace = url.href;
+
     if (original != replace) {
         history.replaceState(null, '', replace);
+    }
+
+    if (url.searchParams.get('from') == 'tk' && document.querySelector('h1 a').textContent == 'iGOH') {
+        document.querySelector('h1 a').textContent += '.cz';
     }
 } catch (error) { }
 

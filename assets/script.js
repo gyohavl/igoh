@@ -29,13 +29,15 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-const params = new URL(document.location).searchParams;
+try {
+    const params = new URL(document.location).searchParams;
 
-if (params.get('from') == 'tk') {
-    document.getElementsByTagName('h1')[0].textContent += '.cz';
-}
+    if (params.get('from') == 'tk') {
+        document.getElementsByTagName('h1')[0].textContent += '.cz';
+    }
 
-// handle 404
-if (params.has('404')) {
-    document.getElementsByTagName('h1')[0].textContent += ' (stránka nenalezena)';
-}
+    // handle 404
+    if (params.has('404')) {
+        document.getElementsByTagName('h1')[0].textContent += ' (stránka nenalezena)';
+    }
+} catch (error) { }
