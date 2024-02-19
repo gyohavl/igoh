@@ -29,15 +29,27 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-try {
-    const params = new URL(document.location).searchParams;
 
-    if (params.get('from') == 'tk') {
-        document.getElementsByTagName('h1')[0].textContent += '.cz';
+try {
+    let url = new URL(location);
+
+    if (url.searchParams.get('from') == 'tk'
+        && document.querySelector('h1').textContent == 'iGOH') {
+        document.querySelector('h1').textContent = 'iGOH.cz';
     }
 
-    // handle 404
-    if (params.has('404')) {
-        document.getElementsByTagName('h1')[0].textContent += ' (stránka nenalezena)';
+    if (url.searchParams.has('404')) {
+        document.querySelector('h1').textContent += ' (stránka nenalezena)';
+    }
+
+    let original = url.href;
+    url.searchParams.delete('fbclid');
+    url.searchParams.delete('odhlasit');
+    url.searchParams.delete('from');
+    let replace = url.href;
+
+    if (original != replace) {
+        // let analytics log the params
+        setTimeout(function () { history.replaceState(null, '', replace); }, 1000);
     }
 } catch (error) { }

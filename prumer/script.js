@@ -80,17 +80,21 @@ showMenu();
 
 try {
     let url = new URL(location);
+
+    if (url.searchParams.get('from') == 'tk'
+        && document.querySelector('h1 a').textContent == 'iGOH') {
+        document.querySelector('h1 a').textContent = 'iGOH.cz';
+    }
+
     let original = url.href;
     url.searchParams.delete('fbclid');
     url.searchParams.delete('odhlasit');
+    url.searchParams.delete('from');
     let replace = url.href;
 
     if (original != replace) {
-        history.replaceState(null, '', replace);
-    }
-
-    if (url.searchParams.get('from') == 'tk' && document.querySelector('h1 a').textContent == 'iGOH') {
-        document.querySelector('h1 a').textContent += '.cz';
+        // let analytics log the params
+        setTimeout(function () { history.replaceState(null, '', replace); }, 1000);
     }
 } catch (error) { }
 
