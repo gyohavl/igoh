@@ -14,7 +14,7 @@ header('Content-Type: text/plain');
 $pageId = 1971180546491940;
 $token = $secrets['fb'];
 
-$url = $fbGraphApiPath . $pageId . '/conversations?fields=participants%2Cmessages.limit(1)%7Bmessage%2Cfrom%7D&limit=5&access_token=' . $token;
+$url = $fbGraphApiPath . $pageId . '/conversations?fields=can_reply%2Cparticipants%2Cmessages.limit(1)%7Bmessage%2Cfrom%7D&limit=5&access_token=' . $token;
 $result = customCurl($url);
 $decoded = json_decode($result, true);
 
@@ -27,6 +27,7 @@ foreach ($decoded['data'] as $conversation) {
         $conversation['messages']['data'][0]['from']['id'] != $pageId
         && !empty($conversation['participants']['data'][0]['id'])
         && !empty($conversation['messages']['data'][0]['message'])
+        && $conversation['can_reply']
     ) {
         echo 'message sent';
         $sender = $conversation['participants']['data'][0]['id'];
