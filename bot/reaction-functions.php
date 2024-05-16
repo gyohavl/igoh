@@ -2,7 +2,7 @@
 function getMessage($sender, $payload, $message, $availableClasses, $token, $url, $adminId) {
     global $fbGraphApiPath;
 
-    $payloadMatching = [];
+    $senderId = $sender['id'];
 
     if (!empty($payload)) {
         if ($payload == "ZACIT") {
@@ -30,11 +30,11 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
             $class = str_replace(' ', '', strtoupper($matches[0]));
 
             if (in_array($class, $availableClasses)) {
-                sql("DELETE FROM bot_suplovani WHERE messenger_id = " . $sender . ";", false);
+                sql("DELETE FROM bot_suplovani WHERE messenger_id = " . $senderId . ";", false);
 
-                $userResponse = customCurl($fbGraphApiPath . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+                $userResponse = customCurl($fbGraphApiPath . $senderId . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
                 $user = json_decode($userResponse, true);
-                sql("INSERT INTO bot_suplovani (messenger_id, first_name, last_name, picture, class) VALUES (" . $sender . ", '" . $user["first_name"] . "', '" . $user["last_name"] . "', '" . $user["profile_pic"] . "', '" . $class . "')", false);
+                sql("INSERT INTO bot_suplovani (messenger_id, first_name, last_name, picture, class) VALUES (" . $senderId . ", '" . $user["first_name"] . "', '" . $user["last_name"] . "', '" . $user["profile_pic"] . "', '" . $class . "')", false);
 
                 $file = getSuplovani();
                 $messageToSend = convertNoChanges(plain($class, $file, true));
@@ -48,15 +48,15 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
         } elseif (preg_match("/\bobědy\b/i", $message, $matches) || preg_match("/\bobedy\b/i", $message, $matches)) {
             // subscribe/cancel canteen
             if (preg_match("/\bobědy[-–]x\b/i", $message) || preg_match("/\bobedy[-–]x\b/i", $message)) {
-                sql("DELETE FROM bot_canteen WHERE messenger_id = " . $sender . ";", false);
+                sql("DELETE FROM bot_canteen WHERE messenger_id = " . $senderId . ";", false);
                 return 'Pondělní zasílání jídelníčku bylo zrušeno.';
             } else {
                 $allergens = (preg_match("/\bobědy[-–]a\b/i", $message, $matches) || preg_match("/\bobedy[-–]a\b/i", $message, $matches));
-                sql("DELETE FROM bot_canteen WHERE messenger_id = " . $sender . ";", false);
+                sql("DELETE FROM bot_canteen WHERE messenger_id = " . $senderId . ";", false);
 
-                $userResponse = customCurl($fbGraphApiPath . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+                $userResponse = customCurl($fbGraphApiPath . $senderId . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
                 $user = json_decode($userResponse, true);
-                sql("INSERT INTO bot_canteen (messenger_id, first_name, last_name, picture, allergens) VALUES (" . $sender . ", '" . $user["first_name"] . "', '" . $user["last_name"] . "', '" . $user["profile_pic"] . "', " . intval($allergens) . ")", false);
+                sql("INSERT INTO bot_canteen (messenger_id, first_name, last_name, picture, allergens) VALUES (" . $senderId . ", '" . $user["first_name"] . "', '" . $user["last_name"] . "', '" . $user["profile_pic"] . "', " . intval($allergens) . ")", false);
 
                 $file = file_get_contents('https://jidelna.gyohavl.cz/faces/login.jsp');
                 $messagesToSend = obedy($allergens, $file);
@@ -76,7 +76,7 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
                     $messageToSend = str_replace('"', '\"', $messageToSend);
                     $jsonData[] = '{
                         "recipient":{
-                        "id":"' . $sender . '"
+                        "id":"' . $senderId . '"
                         },
                         "message":{
                         "text":"' . $messageToSend . '"
@@ -88,20 +88,20 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
             }
         } elseif ($message == "x" || $message == "X" || $message == "×") {
             // cancel suplovani
-            sql("DELETE FROM bot_suplovani WHERE messenger_id = " . $sender . ";", false);
+            sql("DELETE FROM bot_suplovani WHERE messenger_id = " . $senderId . ";", false);
             return 'Pravidelné zasílání suplování bylo zrušeno.';
         } elseif (preg_match("/\b(help)|(otazník)\b/i", $message) || $message == "?" || $message == "Nápověda") {
             // help
             $currentState = array(
-                empty(sql("SELECT * FROM bot_suplovani WHERE messenger_id = $sender;")),
-                empty(sql("SELECT * FROM bot_canteen WHERE messenger_id = $sender;"))
+                empty(sql("SELECT * FROM bot_suplovani WHERE messenger_id = $senderId;")),
+                empty(sql("SELECT * FROM bot_canteen WHERE messenger_id = $senderId;"))
             );
             $text = 'Zadej název třídy, pro kterou budeš chtít dostávat upozornění na změny v suplování (např. 4.B nebo 6.A). Pokud jsi tak již učinil(a) dříve, můžeš zasílání upozornění zrušit pomocí „x“. \n\nJestli bys ocenil(a), kdyby ti bot každé pondělí zasílal jídelníček, napiš „obědy“ nebo „obědy-a“ (pro jídelníček s alergeny). Pro zrušení zasílání jídelníčku napiš „obědy-x“.';
             return $text;
             // disabled buttons as payload isn't working
             $jsonData = '{
                 "recipient":{
-                    "id":"' . $sender . '"
+                    "id":"' . $senderId . '"
                 },
                 "message":{
                     "attachment":{
@@ -141,19 +141,21 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
 			}';
             return array($jsonData);
         } elseif (preg_match("/\bid\b/i", $message)) {
-            return $sender;
+            return $senderId;
         } else {
             // default
-            $userResponse = customCurl($fbGraphApiPath . $sender . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
+            $userResponse = customCurl($fbGraphApiPath . $senderId . "?fields=first_name,last_name,profile_pic&access_token=" . $token);
             $user = json_decode($userResponse, true);
             $message2 = str_replace('"', '\"', $message);
+
+            $name = $sender['name'] ?? ($user["first_name"] . ' ' . $user["last_name"]);
 
             $jsonData = '{
                 "recipient":{
                 "id":"' . $adminId . '"
                 },
                 "message":{
-                "text":"<' . $user["first_name"] . ' ' . $user["last_name"] . '>\n' . $message2 . '"
+                "text":"<' . $name . '>\n' . $message2 . '"
                 },
                 "messaging_type": "MESSAGE_TAG",
                 "tag": "ACCOUNT_UPDATE"
@@ -173,7 +175,7 @@ function sendMessage($message, $sender, $url) {
     } else {
         $jsonData = '{
             "recipient":{
-                "id":"' . $sender . '"
+                "id":"' . $sender['id'] . '"
             },
             "message":{
                 "text":"' . $message . '"

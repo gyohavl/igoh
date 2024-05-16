@@ -30,7 +30,7 @@ foreach ($decoded['data'] as $conversation) {
         && $conversation['can_reply']
     ) {
         echo 'message sent';
-        $sender = $conversation['participants']['data'][0]['id'];
+        $sender = $conversation['participants']['data'][0];
         $message = $conversation['messages']['data'][0]['message'];
         $payload = null;
         $message = getMessage($sender, $payload, $message, $availableClasses, $token, $url, $secrets['admin_messenger_id']);

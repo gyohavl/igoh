@@ -20,7 +20,7 @@ if (isset($_REQUEST['hub_challenge'])) {
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-@$sender = $input['entry'][0]['messaging'][0]['sender']['id'];
+@$sender = $input['entry'][0]['messaging'][0]['sender'];
 @$message = $input['entry'][0]['messaging'][0]['message']['text'];
 @$payload = $input['entry'][0]['messaging'][0]['postback']['payload'];
 $token = $secrets['fb'];
