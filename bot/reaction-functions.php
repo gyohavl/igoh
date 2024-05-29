@@ -86,7 +86,7 @@ function getMessage($sender, $payload, $message, $availableClasses, $token, $url
 
                 return $jsonData;
             }
-        } elseif ($message == "x" || $message == "X" || $message == "×") {
+        } elseif ($message == "x" || $message == "X" || $message == "×" || preg_match("/\bkonec\b/i", $message) || preg_match("/\bstop\b/i", $message) || preg_match("/\bzrušit\b/i", $message)) {
             // cancel suplovani
             sql("DELETE FROM bot_suplovani WHERE messenger_id = " . $senderId . ";", false);
             return 'Pravidelné zasílání suplování bylo zrušeno.';
