@@ -105,6 +105,7 @@ if (isset($_GET["404"])) {
         echo getDirectory(getcwd(), dirname($_SERVER['PHP_SELF']));
 
         function getDirectory($dir, $urlpath, $add = '') {
+            $requestURI = urldecode($_SERVER['REQUEST_URI']);
             $directories = array();
             $files_list = array();
             $files = scandir($dir);
@@ -122,14 +123,16 @@ if (isset($_GET["404"])) {
 
             $html .= '<ul>' . PHP_EOL;
 
-            foreach ($directories as $key => $file) {
-                $isOpen = strpos($_SERVER['REQUEST_URI'], $urlpath . '/' . $file . '/') !== false;
+            foreach ($directories as $file) {
+                $filePath = $urlpath . '/' . $file . '/';
+                $isOpen = strpos($requestURI, $filePath) !== false;
                 $openText = $isOpen ? 'open' : '';
-                $openText2 = $isOpen ? 'true' : 'false';
-                $html .= '<details ' . $openText . '><summary onclick="summaryClicked(\'' . $urlpath . '/' . $file . '/' . '\', ' . $openText2 . ', this);"><span>' . prettyName($file) . '</span></summary>' . getDirectory($dir . '/' . $file, $urlpath . '/' . $file) . '</details>' . PHP_EOL;
+                $html .= '<details ' . $openText . ' data-path="' . $filePath . '"><summary><span>'
+                    . prettyName($file) . '</span></summary>'
+                    . getDirectory($dir . '/' . $file, $urlpath . '/' . $file) . '</details>' . PHP_EOL;
             }
 
-            foreach ($files_list as $key => $file) {
+            foreach ($files_list as $file) {
                 $html .= "\t" . '<li><a href="' . $urlpath . '/' . $file . '">' . $file . '</a></li>' . PHP_EOL;
             }
             $html .= $add;
@@ -174,14 +177,24 @@ if (isset($_GET["404"])) {
     </div>
     <script>
         kebabize();
+        addToggleListeners();
+        var matomoLastNotified = Date.now();
 
         function kebabize() {
-            [...document.getElementsByTagName('li')].forEach(el => {
+            [...document.getElementsByTagName('li')].forEach(function(el) {
                 const link = el.querySelector('a').href;
 
                 if (!link.includes('drive.google.com')) {
                     el.innerHTML += `<span class="kebab" onclick="kebab(this, '${link}');">⋮</span>`;
                 }
+            });
+        }
+
+        function addToggleListeners() {
+            [...document.getElementsByTagName('details')].forEach(function(el) {
+                el.addEventListener('toggle', function(event) {
+                    detailsToggled(el.getAttribute('data-path'), el.open);
+                })
             });
         }
 
@@ -198,14 +211,26 @@ if (isset($_GET["404"])) {
             }
         }
 
-        function summaryClicked(route, isOpen, el) {
-            if (isOpen) {
-                window.history.replaceState({}, '', route.substring(0, route.slice(0, -1).lastIndexOf('/') + 1));
-            } else {
-                window.history.replaceState({}, '', route);
-            }
+        function detailsToggled(route, wasOpened, byUser) {
+            // is fired on page load (if some details are opened by default)
 
-            el.setAttribute('onclick', `summaryClicked('${route}', ${!isOpen}, this);`);
+            if (wasOpened) {
+                window.history.replaceState({}, '', route);
+                notifyMatomo(route);
+            } else {
+                window.history.replaceState({}, '', route.substring(0, route.slice(0, -1).lastIndexOf('/') + 1));
+            }
+        }
+
+        function notifyMatomo(route) {
+            // the primary purpose is to prevent logging page load repeatedly
+            var currentMillis = Date.now();
+            const cooldownMillis = 2000;
+
+            if (matomoLastNotified + cooldownMillis < currentMillis) {
+                _paq.push(['setCustomUrl', route]);
+                _paq.push(['trackPageView']);
+            }
         }
     </script>
 </body>
