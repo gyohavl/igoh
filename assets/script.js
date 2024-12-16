@@ -11,7 +11,7 @@
 // getclass for timetable link
 fetch('prumer/?getclass=2').then(r => r.text()).then(t => {
     t = t || 'ZR';
-    document.getElementById('ttpublic').setAttribute('href', `/b/timetable/public/Actual/class/${t}%3FTouchMode=1`);
+    document.getElementById('ttpublic').setAttribute('href', `/b/timetable/public/Actual/class/${t}%253FTouchMode=1`);
 });
 
 // console log for devs

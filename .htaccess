@@ -1,6 +1,6 @@
 RewriteEngine On
 
-RewriteRule ^b/(.*)$ prumer/?redirect=$1
+RewriteRule ^b/(.*)$ prumer/?redirect=$1 [UnsafeAllow3F]
 RewriteRule ^b$ prumer/?redirect=
 
 RewriteRule ^s/(.*)$ assets/shortener.php?s=$1
