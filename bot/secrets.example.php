@@ -8,5 +8,6 @@ return array(
     'fb' => '',
     'fb_verify_token' => '',
     'admin' => '',
-    'canteen' => ''
+    'canteen' => '',
+    'encrypt_key' => ''
 );

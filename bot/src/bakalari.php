@@ -3,7 +3,6 @@
 $suplovaniUrl = 'https://gyohavl.bakalari.cz';
 $cookiefile = tempnam(sys_get_temp_dir(), 'cookie');
 file_put_contents($cookiefile, getConfigValue('cookies'));
-$refreshToken = getConfigValue('token');
 
 function suplovaniCustomCurl($url) {
     global $curl_timeout, $cookiefile, $debug;
@@ -92,13 +91,24 @@ function suplovaniGetTimestamp() {
 }
 
 function getSuplovani() {
-    global $refreshToken, $suplovaniUrl;
+    global $suplovaniUrl, $secrets;
     $timestamp = suplovaniGetTimestamp() + 3600000 * 3; // adding span because of timezones
     $getParams = "DateEdit%24State={%26quot%3BrawValue%26quot%3B%3A%26quot%3B$timestamp%26quot%3B%2C%26quot%3BuseMinDateInsteadOfNull%26quot%3B%3Afalse}&DateEdit=&FilterDropDown_VI=1&FilterDropDown=&__VIEWSTATE=";
     $page = suplovaniCustomCurl("$suplovaniUrl/next/zmeny.aspx?$getParams");
 
     if (strpos($page, 'Změny') === false) {
-        $login = suplovaniLoginConditions([$refreshToken, false]);
+        $usernamePassword = getConfigValue('login');
+        $refreshToken = getConfigValue('token');
+
+        if ($usernamePassword) {
+            $creds = explode(' ', $usernamePassword, 2);
+            // https://anycript.com/crypto
+            $creds[1] = openssl_decrypt($creds[1], 'aes-128-cbc', $secrets['encrypt_key']);
+        } else {
+            $creds = [$refreshToken, false];
+        }
+
+        $login = suplovaniLoginConditions($creds);
 
         if ($login[0]) {
             $webResponse = suplovaniSendRequest(false, $login[1], '3/logintoken');
