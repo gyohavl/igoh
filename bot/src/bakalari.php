@@ -46,25 +46,32 @@ function suplovaniSendRequest($creds = false, $token = '', $page = '') {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     $headers = array();
+
     if ($creds) {
         curl_setopt($ch, CURLOPT_POST, 1);
+        $cd0 = rawurlencode($creds[0]);
+        $cd1 = rawurlencode($creds[1]);
+
         if ($creds[1]) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=ANDR&grant_type=password&username=$creds[0]&password=$creds[1]");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=ANDR&grant_type=password&username=$cd0&password=$cd1");
         } else {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=ANDR&grant_type=refresh_token&refresh_token=$creds[0]");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, "client_id=ANDR&grant_type=refresh_token&refresh_token=$cd0");
         }
+
         $headers[] = 'Accept: application/json';
         $headers[] = 'Content-Type: application/x-www-form-urlencoded';
     } elseif ($token) {
         $headers[] = 'Authorization: Bearer ' . $token;
     }
+
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    $result = [true, curl_exec($ch), ''];
+    $result = array(true, curl_exec($ch), '');
+
     if (curl_errno($ch)) {
         $result[2] = 'Error: ' . curl_error($ch);
     }
+
     curl_close($ch);
-    // var_dump($result);
     return $result;
 }
 
