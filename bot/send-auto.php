@@ -65,6 +65,7 @@ if (isset($_POST['canteen']) && $_POST['canteen'] == $secrets['canteen']) {
     // get old messages from db
     $oldMessages = getConfigValue('messages');
     $oldMessages = unserialize($oldMessages);
+    $errorNotificationOn = false;
 
     if ($file !== false && !str_contains($file, '[ERROR]')) {
         $send = plain('doprazdnin', $file);
@@ -113,7 +114,7 @@ if (isset($_POST['canteen']) && $_POST['canteen'] == $secrets['canteen']) {
 
         $errorStatusChanged = setErrorStatus(false);
 
-        if ($errorStatusChanged) {
+        if ($errorStatusChanged && $errorNotificationOn) {
             // notify Vítek
             $jsonData = '{
                 "recipient":{
@@ -130,7 +131,7 @@ if (isset($_POST['canteen']) && $_POST['canteen'] == $secrets['canteen']) {
     } else {
         $errorStatusChanged = setErrorStatus(true);
 
-        if ($errorStatusChanged) {
+        if ($errorStatusChanged && $errorNotificationOn) {
             // notify Vítek
             $jsonData = '{
                 "recipient":{
