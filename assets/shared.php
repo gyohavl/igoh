@@ -7,18 +7,53 @@ function main() {
 		$result = loginConditions(array($_POST['username'], $_POST['password']/*, isset($_POST['refresh']) ? true : false*/));
 	} elseif (isset($_GET['odhlasit'])) {
 		$_SESSION['t'] = '';
-		setcookie('prumer_refresh_token', '', 10, '/');
+		deleteRefreshToken();
 		$result = msg('Uživatel odhlášen.');
 	} elseif (!empty($_SESSION['t'])) {
 		$bearer = urldecode($_SESSION['t']);
 		$result = loadContent($bearer);
-	} elseif (isset($_COOKIE['prumer_refresh_token'])) {
-		$result = loginConditions(array($_COOKIE['prumer_refresh_token'], false));
+	} elseif ($refreshToken = loadRefreshToken()) {
+		$result = loginConditions(array($refreshToken, false));
 	} else {
 		$result = msg();
 	}
 
 	return $result;
+}
+
+function storeRefreshToken(string $token) {
+    $chunks = str_split($token, 2000);
+
+    $cookieOptions = [
+        'expires'  => time() + (86400 * 30),
+        'path'     => '/',
+    ];
+
+    foreach ($chunks as $i => $chunk) {
+        // uses setrawcookie to avoid unnecessary percent-encoding
+        setrawcookie("prumer_rt_{$i}", $chunk, $cookieOptions);
+    }
+}
+
+function loadRefreshToken(): string  {
+    $refreshToken = '';
+    $i = 0;
+
+    while (isset($_COOKIE["prumer_rt_{$i}"])) {
+        $refreshToken .= $_COOKIE["prumer_rt_{$i}"];
+        $i++;
+    }
+
+    return $refreshToken;
+}
+
+function deleteRefreshToken() {
+    $i = 0;
+
+    while (isset($_COOKIE["prumer_rt_{$i}"])) {
+        setcookie("prumer_rt_{$i}", '', 10, '/');
+        $i++;
+    }
 }
 
 function loginConditions($creds) {
@@ -31,7 +66,8 @@ function loginConditions($creds) {
 			$_SESSION['t'] = urlencode($bearer);
 
 			// if ($creds[2] || !$creds[1]) {
-			setcookie('prumer_refresh_token', $decoded->refresh_token, time() + (86400 * 30), '/');
+			// setcookie('prumer_refresh_token', $decoded->refresh_token, time() + (86400 * 30), '/');
+            storeRefreshToken($decoded->refresh_token);
 			// }
 
 			$result = loadContent($bearer);
@@ -44,7 +80,7 @@ function loginConditions($creds) {
             }
 
 			$_SESSION['t'] = '';
-			setcookie('prumer_refresh_token', '', 10, '/');
+			deleteRefreshToken();
 		}
 	} else {
 		$result = msg('Problém s přihlášením.');

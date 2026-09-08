@@ -36,8 +36,6 @@ function plain($trida, $file, $nochanges = false) {
                 // $content = preg_replace('/\bhod\b/', '', $content);
                 // $content = preg_replace('/' . $trida . '\s/', $trida . "<br>", $content);
                 $content = preg_replace("/[\s\n\t]+/", " ", $content);
-                // $content = preg_replace("/(\d\.)\- (\d\.)/", "$1–$2", $content);
-                // $content = preg_replace("/– \(/", "(", $content);
                 $content = strip_tags($content, '<br>');
                 $content = preg_replace("/&gt;/", ">", $content);
                 $content = preg_replace("/&lt;/", "<", $content);
@@ -46,6 +44,8 @@ function plain($trida, $file, $nochanges = false) {
                 $content = preg_replace("/\s*<br>\s*/", "<br>", $content);
                 $content = preg_replace("/<br>$/", "", $content);
                 $content = preg_replace("/(<br>\d\w?)\s/", "$1. ", $content);
+                $content = str_replace(" - ", "–", $content);
+                $content = str_replace("-2. hod ", "", $content);
                 $vysledek = $vysledek . $content;
                 return $vysledek;
             } else {

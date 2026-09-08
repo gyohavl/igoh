@@ -85,8 +85,10 @@ function loadContent($bearer) {
         if (isset($decodedM->Subjects)) {
             return echoHeader($decodedM->Subjects, $name);
         } else {
-            if (isset($_COOKIE['prumer_refresh_token'])) {
-                return loginConditions(array($_COOKIE['prumer_refresh_token'], false));
+            $refreshToken = loadRefreshToken();
+
+            if ($refreshToken) {
+                return loginConditions(array($refreshToken, false));
             } else {
                 $_SESSION['t'] = '';
                 return msg('Přihlášení vypršelo.');

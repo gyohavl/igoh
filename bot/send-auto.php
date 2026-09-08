@@ -52,9 +52,18 @@ if (isset($_POST['canteen']) && $_POST['canteen'] == $secrets['canteen']) {
     echo '{}]';
 } else if (isset($_GET['check'])) {
     header('Content-Type: text/plain');
-    echo preg_replace('/(\s)\s+/', '$1', html_entity_decode(strip_tags(getSuplovani()))) . "\n\n";
     $obedy = obedy(true, file_get_contents('https://jidelna.gyohavl.cz/faces/login.jsp'));
     echo str_replace('<br>', "\n", implode("\n", $obedy));
+
+    $file = getSuplovani();
+
+    foreach ($availableClasses as $class) {
+        $message = plain($class, $file, true);
+        echo PHP_EOL . $class . PHP_EOL . preg_replace('/<br>/', "\n", $message) . PHP_EOL;
+    }
+
+    $valid_html = preg_replace('/>>|<</', '', $file);
+    echo preg_replace('/(\s)\s+/', '$1', html_entity_decode(strip_tags($valid_html))) . "\n\n";
 } else {
 
     // #############
