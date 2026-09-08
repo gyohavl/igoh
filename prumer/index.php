@@ -160,7 +160,7 @@ function msg($text = '') {
             ' . (!empty($_GET['debug']) ? '<input type="hidden" name="debug" value="1">' : '') . '
 			<button type="submit">Přihlásit se</button>
 		</form>
-		<small>Tento nástroj jsem vytvořil já, <a href="https://www.vitkolos.cz" class="link">Vít Kološ</a>. Studentům Gymnázia Olgy Havlové je k&nbsp;dispozici zcela zdarma. Pokud mi chceš pomoct s&nbsp;vývojem, <a href="mailto:vit.kolos@gmail.com" class="link">ozvi se mi</a>.</small>
+		<small>Tento nástroj je určen studentům Gymnázia Olgy Havlové. Pokud chceš pomoct s&nbsp;dalším rozvojem, <a href="https://www.vitkolos.cz" class="link">ozvi se mi</a>.</small>
 		<small>Nejsi studentem GOH? Přejdi do <a href="anonymni.html" class="link">anonymní verze aplikace</a>.</small>
 		';
     return $header . wrap($text) . wrap($form) . wrap(getIframe());
