@@ -122,6 +122,5 @@ function sendRequest($creds = false, $token = '', $page = '') {
 		$result[2] = 'Error: ' . curl_error($ch);
 	}
 
-	curl_close($ch);
 	return $result;
 }

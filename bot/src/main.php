@@ -21,7 +21,6 @@ function customCurl($url, $jsonData = null) {
     curl_setopt($c, CURLOPT_URL, $url);
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
     $result = curl_exec($c);
-    curl_close($c);
 
     $result = !empty($result) ? $result : '{}';
     $displayUrl = str_replace($secrets['fb'], '<key>', $url);

@@ -55,7 +55,6 @@ function isImageUrlWorking($url) {
     curl_setopt($c,  CURLOPT_RETURNTRANSFER, true);
     curl_exec($c);
     $httpCode = curl_getinfo($c, CURLINFO_HTTP_CODE);
-    curl_close($c);
 
     return ($httpCode == 200);
 }

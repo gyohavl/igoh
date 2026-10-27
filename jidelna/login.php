@@ -45,7 +45,6 @@ function csrfReq() {
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_HEADER, 1);
 	$result = curl_exec($ch);
-	curl_close($ch);
 	list($header, $body) = explode("\r\n\r\n", $result, 2);
 	$cookies = getCookies($header);
 	preg_match('/<input +type="hidden" +name="_csrf" +value="([^\"]+) *"\/>/', $body, $m);
@@ -70,7 +69,6 @@ function loginReq($cookies = null, $csrf = "", $username = "", $password = "", $
 	));
 	curl_setopt($ch, CURLOPT_HEADER, 1);
 	$result = curl_exec($ch);
-	curl_close($ch);
 	list($header, $body) = explode("\r\n\r\n", $result, 2);
 	$cookies = getCookies($header);
 	return $cookies;

@@ -17,7 +17,6 @@ function suplovaniCustomCurl($url) {
     $result = curl_exec($c);
     $http_code = curl_getinfo($c, CURLINFO_HTTP_CODE);
     $ct = curl_getinfo($c, CURLINFO_CONTENT_TYPE);
-    curl_close($c);
     setConfigValue('cookies', file_get_contents($cookiefile));
     return ($http_code == 200 && substr($ct, 0, 9) == 'text/html') ? $result : "";
 }
@@ -70,7 +69,6 @@ function suplovaniSendRequest($creds = false, $token = '', $page = '') {
         $result[2] = 'Error: ' . curl_error($ch);
     }
 
-    curl_close($ch);
     return $result;
 }
 

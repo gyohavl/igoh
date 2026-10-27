@@ -18,7 +18,6 @@ function req($cookies = null, $u) {
 	}
 	curl_setopt($ch, CURLOPT_HEADER, 1);
 	$result = curl_exec($ch);
-	curl_close($ch);
 	list($header, $body) = explode("\r\n\r\n", $result, 2);
 	return array($body, $header);
 }
